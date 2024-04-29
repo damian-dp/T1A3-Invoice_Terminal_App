@@ -237,3 +237,135 @@ def convert_html_to_pdf(html_filename, pdf_filename):
         return False
     finally:
         os.remove(html_filename)
+        
+def save_invoice_record(customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items):
+    file_exists = os.path.isfile(PAST_INVOICES_PATH)
+    
+    with open(PAST_INVOICES_PATH, 'a', newline='') as csvfile:
+        fieldnames = ['Invoice Number', 'Customer Company Name', 'Customer Contact Name', 'Customer Phone', 'Customer Email', 'Customer Address', 'Invoice Due Date', 'Items']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        
+        if not file_exists:
+            writer.writeheader()
+        
+        writer.writerow({
+            'Invoice Number': str(invoice_number),  # Convert to string
+            'Customer Company Name': customer_company_name,
+            'Customer Contact Name': customer_contact_name,
+            'Customer Phone': customer_phone,
+            'Customer Email': customer_email,
+            'Customer Address': customer_address,
+            'Invoice Due Date': invoice_due,
+            'Items': "; ".join([f"{item['name']}: {item['description']}: {item['price']}" for item in items])
+        })
+
+def view_past_invoices():
+    while True:
+        clear_terminal()
+        print("\n========== View Past Invoices ==========\n")
+        try:
+            with open(PAST_INVOICES_PATH, 'r') as file:
+                reader = csv.DictReader(file)
+                invoices = list(reader)
+                for idx, row in enumerate(invoices):
+                    print(f"{idx + 1}. INV# {row['Invoice Number']} | {row['Customer Company Name']} | Due: {row['Invoice Due Date']}")
+            
+            print("\n")
+                   
+            choice = input("Enter the number of the invoice you would like to manage or type 'back': ")
+            if choice.lower() == 'back':
+                return
+            else:
+                invoice_index = int(choice) - 1  # Adjusting for zero-based indexing
+                if 0 <= invoice_index < len(invoices):
+                    print("\n1. Delete Invoice")
+                    print("2. Re-export to PDF")
+                    print("\n")
+                    action_choice = input("Choose an action (1-2): ")
+                    if action_choice == '1':
+                        confirm = input("Are you sure you want to delete this invoice? (yes/no): ")
+                        if confirm.lower() == 'yes':
+                            delete_invoice_record(invoices[invoice_index]['Invoice Number'])
+                        else:
+                            print("Deletion cancelled.")
+                    elif action_choice == '2':
+                        re_export_to_pdf(invoices[invoice_index])
+                    else:
+                        print("Invalid choice.")
+                else:
+                    print("Invalid choice.")
+        except FileNotFoundError:
+            print("No past invoices found.")
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+
+def re_export_to_pdf(invoice):
+    try:
+        items = []
+        item_details = invoice['Items'].split('; ')
+        for item in item_details:
+            item_components = item.split(': ')
+            item_name = item_components[0]
+            item_description = ': '.join(item_components[1:])  # Avoid including the price in the description
+            item_price = float(item_components[-1])  # Last component is the price
+            items.append({'name': item_name, 'description': item_description, 'price': item_price})
+        
+        html_content = create_html_invoice(
+            company_name='Your Company Name',
+            company_address='Your Company Address',
+            company_phone='Your Company Phone',
+            company_email='Your Company Email',
+            company_payment_details='Your Company Payment Details',
+            customer_company_name=invoice['Customer Company Name'],
+            customer_contact_name=invoice['Customer Contact Name'],
+            customer_phone=invoice['Customer Phone'],
+            customer_email=invoice['Customer Email'],
+            customer_address=invoice['Customer Address'],
+            invoice_number=invoice['Invoice Number'],
+            invoice_due=invoice['Invoice Due Date'],
+            items=items
+        )
+        
+        # Create the Invoice Exports directory if it doesn't exist
+        output_dir = "Invoice Exports"
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            print(f"Directory created: {output_dir}")
+
+        html_filename = f"temp_{invoice['Invoice Number']}.html"
+        pdf_filename = f"re_export_{invoice['Invoice Number']}.pdf"
+        
+        # Save the HTML content to file in the root directory
+        save_html_to_file(html_filename, html_content)
+        
+        # Correctly use paths based on how the convert_html_to_pdf handles paths
+        pdf_path = os.path.join(output_dir, pdf_filename)
+        
+        print(f"HTML path: {html_filename}")  # Debug print
+        print(f"PDF path: {pdf_path}")    # Debug print
+        
+        # Correcting the PDF path input to match the internal handling in convert_html_to_pdf
+        if convert_html_to_pdf(html_filename, pdf_filename):  # Pass filenames only if that's how convert_html_to_pdf expects it
+            print(f"PDF exported successfully: {pdf_path}")
+        else:
+            print("PDF export failed.")
+
+    except Exception as e:
+        print(f"An error occurred during PDF export: {str(e)}")
+
+def delete_invoice_record(invoice_number):
+    try:
+        with open(PAST_INVOICES_PATH, 'r') as file:
+            invoices = list(csv.DictReader(file))
+        
+        with open(PAST_INVOICES_PATH, 'w', newline='') as file:
+            fieldnames = invoices[0].keys()
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            for invoice in invoices:
+                if invoice['Invoice Number'] != invoice_number:
+                    writer.writerow(invoice)
+                    
+        print("Invoice deleted successfully.")
+    except Exception as e:
+        print(f"An error occurred while deleting the invoice: {str(e)}")
