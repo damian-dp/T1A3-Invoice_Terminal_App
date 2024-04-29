@@ -23,7 +23,6 @@ def clear_terminal():
     # Execute the clear command
     subprocess.run(clear_command, shell=True)
 
-
 def main():
     clear_terminal()
     # Check onboarding status at the start of the main menu
@@ -80,4 +79,34 @@ def onboarding():
         print("Company profile saved.")
         
     except IOError as e:
-        print(f"Failed to save company profile: {str(e)}")
+        print(f"Failed to save company profile: {str(e)}")   
+        
+def collect_input_invoice():
+    clear_terminal()
+    print("\n========== Customer Details ==========")
+    customer_company_name = input("Enter customer company name: ")
+    customer_contact_name = input("Enter customer contact name: ")
+    customer_phone = input("Enter customer phone number: ")
+    customer_email = input("Enter customer email: ")
+    customer_address = input("Enter customer address: ")
+    
+    print("\n========== Invoice Details ==========")
+    invoice_number = input("Enter invoice number: ")
+    invoice_due = input("Enter invoice due date (DD/MM/YY): ")
+
+    print("\n========== Invoice Items ==========")
+    items = []
+    while True:
+        print("\nItem details:")
+        item_name = input("Enter item name (or 'done' to finish): ")
+        if item_name.lower() == 'done':
+            break
+        item_description = input("Enter item description: ")
+        try:
+            item_price = float(input("Enter item price: "))
+        except ValueError:
+            print("Invalid price. Please enter a valid number.")
+            continue
+        items.append({'name': item_name, 'description': item_description, 'price': item_price})
+    
+    return customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items
