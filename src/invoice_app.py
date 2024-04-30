@@ -1,4 +1,5 @@
 import os
+import time
 import csv
 import subprocess
 import datetime
@@ -169,8 +170,14 @@ def create_new_invoice():
     save_html_to_file("temp_invoice.html", html_content)
     
     if convert_html_to_pdf("temp_invoice.html", pdf_filename):
-        print(f"\nInvoice created successfully! The PDF has been saved as {pdf_filename}")
         save_invoice_record(customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items)
+        
+        print("\n\n\n\n")
+        print(f"\nInvoice created successfully! The PDF has been saved as {pdf_filename}")
+        print("\n\n\n")
+        print("Redirecting you to the main menu in 10 seconds...")
+        print("\n\n\n\n")
+        time.sleep(10)
     else:
         print("\nFailed to create PDF. Check the HTML file for errors.")
 
