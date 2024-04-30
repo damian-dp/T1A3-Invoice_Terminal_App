@@ -96,7 +96,14 @@ def main_menu_screen():
     print_full_width_line(Fore.dark_gray)
 
 def create_invoice_screen():
-    pass
+    
+    mixed_align_text(
+        "", "Create New Invoice", "",
+        Fore.RED, Fore.white, Fore.dark_gray
+    )
+    
+    print(Figlet(font='big').renderText('NEW INVOICE'))
+
 
 def past_invoice_screen():
     pass

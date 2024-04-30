@@ -84,31 +84,49 @@ def onboarding():
         
 def collect_input_invoice():
     clear_terminal()
-    print("\n========== Customer Details ==========")
+    create_invoice_screen()
+    
+    print("\n========== Customer Details ==========\n")
     customer_company_name = input("Enter customer company name: ")
     customer_contact_name = input("Enter customer contact name: ")
     customer_phone = input("Enter customer phone number: ")
     customer_email = input("Enter customer email: ")
     customer_address = input("Enter customer address: ")
+    print("\n")
     
-    print("\n========== Invoice Details ==========")
+    print_full_width_line(Fore.dark_gray)
+    print("\n========== Invoice Details ==========\n")
     invoice_number = input("Enter invoice number: ")
     invoice_due = input("Enter invoice due date (DD/MM/YY): ")
-
-    print("\n========== Invoice Items ==========")
+    print("\n")
+    
+    print_full_width_line(Fore.dark_gray)
+    print("\n========== Add Invoice Items ==========")
     items = []
+
     while True:
-        print("\nItem details:")
-        item_name = input("Enter item name (or 'done' to finish): ")
+        print("\n")
+        item_name = input("Enter item name: ")
         if item_name.lower() == 'done':
             break
+
         item_description = input("Enter item description: ")
-        try:
-            item_price = float(input("Enter item price: "))
-        except ValueError:
-            print("Invalid price. Please enter a valid number.")
-            continue
+
+        while True:
+            try:
+                item_price = float(input("Enter item price: "))
+                break  # Exit the inner loop if the price is correctly entered
+            except ValueError:
+                print("Invalid price. Please enter a valid number.")
+
+        # Append the item as a dictionary to the items list
         items.append({'name': item_name, 'description': item_description, 'price': item_price})
+        
+        print("\n")
+        # Ask the user if they want to add another item
+        continue_adding = input(f"{Fore.light_gray}Would you like to add another item? (yes/no): {Style.reset}")
+        if continue_adding.lower() != 'yes':
+            break
     
     return customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items 
 

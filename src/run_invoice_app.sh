@@ -10,11 +10,11 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # Install Python dependencies
-pip3 install jinja2 xhtml2pdf colored
+pip3 install jinja2 xhtml2pdf colored pyfiglet
 
 # Desired dimensions
-HEIGHT=50
-WIDTH=145
+HEIGHT=35
+WIDTH=125
 
 # Function to resize using 'resize' command
 resize_terminal() {
