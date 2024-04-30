@@ -2,8 +2,8 @@ import os
 import csv
 import subprocess
 import datetime
-from jinja2 import Template                 # type: ignore
-from xhtml2pdf import pisa                  # type: ignore
+from jinja2 import Template                     # type: ignore
+from xhtml2pdf import pisa                      # type: ignore
 from colored import Fore, Back, Style, attr     # type: ignore
 from pyfiglet import Figlet                     # type: ignore
 
@@ -66,6 +66,11 @@ def onboarding():
     company_email = input("Enter your company email: ")
     company_payment_details = input("Enter payment details and instructions that will be displayed on your invoices: ")
     
+    # Check if the file exists
+    if not os.path.isfile(COMPANY_PROFILE_PATH):
+        # If not, create the directories leading to the file
+        os.makedirs(os.path.dirname(COMPANY_PROFILE_PATH), exist_ok=True)
+
     try:
         with open(COMPANY_PROFILE_PATH, 'w', newline='') as file:
             writer = csv.writer(file)
@@ -75,7 +80,7 @@ def onboarding():
         print("Company profile saved.")
         
     except IOError as e:
-        print(f"Failed to save company profile: {str(e)}")   
+        print(f"Failed to save company profile: {str(e)}")
         
 def collect_input_invoice():
     clear_terminal()
