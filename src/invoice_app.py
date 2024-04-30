@@ -369,3 +369,64 @@ def delete_invoice_record(invoice_number):
         print("Invoice deleted successfully.")
     except Exception as e:
         print(f"An error occurred while deleting the invoice: {str(e)}")
+        
+def view_and_update_company_profile():
+    
+    print("\n========== Company Profile ==========\n")
+    
+    # Check if the company profile file exists
+    if not os.path.exists(COMPANY_PROFILE_PATH):
+        print("No company profile found. Please create a new one.")
+        return
+
+    # Reading the current company profile data
+    try:
+        with open(COMPANY_PROFILE_PATH, 'r') as file:
+            reader = csv.DictReader(file)
+            company_data = next(reader)  # Get the current data as a dictionary
+    
+    except FileNotFoundError:
+        print("No company profile found. Restart application to create a new one.")
+    
+    except Exception as e:
+        print(f"Error reading the file: {str(e)}")
+        return
+
+    # Display the current company details
+    fieldnames = company_data.keys()
+    for idx, key in enumerate(fieldnames):
+        print(f"{idx + 1}. {key}: {company_data[key]}")
+
+    # Interactive update of company details
+    while True:
+        user_input = input("\nEnter the number of the detail to update or type 'back' to finish editing: ")
+        if user_input.lower() == 'back':
+            break
+
+        # Validate input and update data
+        if user_input.isdigit():
+            choice_index = int(user_input) - 1  # Convert to zero-based index
+            if 0 <= choice_index < len(fieldnames):
+                key_to_update = list(fieldnames)[choice_index]
+                new_value = input(f"Enter new value for {key_to_update}: ")
+                company_data[key_to_update] = new_value
+                print("\n========== Update Company Profile ==========\n")
+                for idx, key in enumerate(fieldnames):
+                    print(f"{idx + 1}. {key}: {company_data[key]}")
+            else:
+                print("Invalid number, please enter a valid number or type 'back'.")
+        else:
+            print("Please enter a number or type 'back'.")
+
+    # Write the updated details back to the CSV file
+    try:
+        with open(COMPANY_PROFILE_PATH, 'w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow(company_data)
+        print("\nCompany profile updated successfully.")
+    except Exception as e:
+        print(f"Error writing to file: {str(e)}")
+        
+if __name__ == "__main__":
+    main()
