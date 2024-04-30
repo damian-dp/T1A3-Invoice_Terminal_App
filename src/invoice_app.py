@@ -4,6 +4,10 @@ import subprocess
 import datetime
 from jinja2 import Template                 # type: ignore
 from xhtml2pdf import pisa                  # type: ignore
+from colored import Fore, Back, Style, attr     # type: ignore
+from pyfiglet import Figlet                     # type: ignore
+
+from util.menu_ui import main_menu_screen, create_invoice_screen, print_full_width_line
 
 COMPANY_PROFILE_PATH = 'util/data/company_profile.csv'
 PAST_INVOICES_PATH = 'util/data/past_invoices.csv'
@@ -23,22 +27,13 @@ def clear_terminal():
     # Execute the clear command
     subprocess.run(clear_command, shell=True)
 
-def main():
-    clear_terminal()
-    # Check onboarding status at the start of the main menu
-    skip_onboarding()
-    clear_terminal()
+def app():
+    # Check onboarding status at the start of the app
+    check_onboarding()
     
+    # Menu loop
     while True:
-        print("\n========== Invoice App Menu ==========")
-        print("\n")
-        
-        print("1. Create a new invoice")
-        print("2. View past invoices")
-        print("3. View company profile")
-        print("4. Exit")
-        
-        print("\n")
+        main_menu_screen()
         choice = input("Enter your choice (1-4): ")
         
         if choice == '1':
@@ -49,11 +44,12 @@ def main():
             view_and_update_company_profile()
         elif choice == '4':
             print("Exiting the application.")
+            clear_terminal()
             break
         else:
             print("Invalid choice, please enter 1, 2, 3, or 4.")
             
-def skip_onboarding():
+def check_onboarding():
     if os.path.exists(COMPANY_PROFILE_PATH):
         print("Onboarding already completed.")
         with open(COMPANY_PROFILE_PATH, 'r', newline='') as file:
@@ -109,22 +105,22 @@ def collect_input_invoice():
             continue
         items.append({'name': item_name, 'description': item_description, 'price': item_price})
     
-    return customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items
-
-def read_company_profile():
-    try:
-        with open(COMPANY_PROFILE_PATH, 'r', newline='') as file:
-            reader = csv.reader(file)
-            next(reader)  # Skip header
-            return next(reader)  # Return the first row with actual data
-    except FileNotFoundError:
-        print("No company profile found. Please complete onboarding first.")
-        return None
-    except Exception as e:
-        print(f"Failed to read company profile: {str(e)}")
-        return None     
+    return customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items 
 
 def create_new_invoice():
+    
+    def read_company_profile():
+        try:
+            with open(COMPANY_PROFILE_PATH, 'r', newline='') as file:
+                reader = csv.reader(file)
+                next(reader)  # Skip header
+                return next(reader)  # Return the first row with actual data
+        except FileNotFoundError:
+            print("No company profile found. Please complete onboarding first.")
+            return None
+        except Exception as e:
+            print(f"Failed to read company profile: {str(e)}")
+            return None     
     
     company_profile = read_company_profile()
     
@@ -429,4 +425,4 @@ def view_and_update_company_profile():
         print(f"Error writing to file: {str(e)}")
         
 if __name__ == "__main__":
-    main()
+    app()
