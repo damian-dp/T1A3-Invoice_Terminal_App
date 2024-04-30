@@ -2,6 +2,7 @@ import os
 import time
 import csv
 import subprocess
+import curses
 import datetime
 from jinja2 import Template                     # type: ignore
 from xhtml2pdf import pisa                      # type: ignore
@@ -12,6 +13,26 @@ from util.menu_ui import main_menu_screen, create_invoice_screen, print_full_wid
 
 COMPANY_PROFILE_PATH = 'util/data/company_profile.csv'
 PAST_INVOICES_PATH = 'util/data/past_invoices.csv'
+
+def resize_terminal():
+    # The command to resize the terminal window
+    resize_command = 'printf "\\e[8;35;125t"'
+
+    # Execute the resize command
+    subprocess.run(resize_command, shell=True)
+
+    # Initialize curses
+    stdscr = curses.initscr()
+
+    # Attempt to resize the terminal
+    try:
+        curses.resizeterm(35, 125)
+    except curses.error:
+        # The terminal size could not be changed
+        pass
+
+    # End curses
+    curses.endwin()
 
 def clear_terminal():
     # Clear terminal command for different operating systems
@@ -85,6 +106,7 @@ def onboarding():
         
 def collect_input_invoice():
     clear_terminal()
+    resize_terminal()
     create_invoice_screen()
     
     print("\n========== Customer Details ==========\n")
@@ -295,9 +317,9 @@ def view_past_invoices():
                 invoices = list(reader)
                 for idx, row in enumerate(invoices):
                     print(f"{idx + 1}. INV# {row['Invoice Number']} | {row['Customer Company Name']} | Due: {row['Invoice Due Date']}")
-            
+
             print("\n")
-                   
+
             choice = input("Enter the number of the invoice you would like to manage or type 'back': ")
             if choice.lower() == 'back':
                 return
