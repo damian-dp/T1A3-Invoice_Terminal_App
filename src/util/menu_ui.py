@@ -1,5 +1,6 @@
 import os
 import re
+import time
 from colored import Fore, Back, Style, attr     # type: ignore
 from pyfiglet import Figlet                     # type: ignore
 
@@ -129,6 +130,49 @@ def create_invoice_screen_body(customer_company_name=None, customer_contact_name
     print("\n\n")
     print_full_width_line(Fore.dark_gray)
 
+def export_success_screen(pdf_filename=None):
+    
+    mixed_align_text(
+        "", "Export Successful", "",
+        Fore.RED, Fore.white, Fore.dark_gray
+    )
+    print_full_width_line(Fore.dark_gray)
+    
+    print("\n\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"{Fore.dark_gray}Invoice created successfully!{Style.reset}"))
+    
+    print("\n")
+    
+    print(centre_align_text(f"The PDF has been saved as {Fore.green}{pdf_filename}{Style.reset}"))
+    print(centre_align_text(f"in the Invoice Exports folder."))
+    
+    print("\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"Redirecting you to the main menu in 10 seconds..."))
+    
+    print("\n")
+
+    print_full_width_line(Fore.dark_gray)
+
+    time.sleep(10)
+    
+def export_failure_screen():
+    
+    mixed_align_text(
+        "", "Export Failed", "",
+        Fore.RED, Fore.white, Fore.dark_gray
+    )
+    print_full_width_line(Fore.dark_gray)
+    
+    print("\n\n\n\n")
+    print(centre_align_text(f"{Fore.dark_gray}An error occurred while creating the invoice.{Style.reset}"))
+    print("\n\n")
+    print(centre_align_text(f"{Fore.dark_gray}Please try again.{Style.reset}"))
+    print("\n\n\n\n")
+    
+    print("Redirecting you to the main menu in 10 seconds...")
+    time.sleep(10)
 
 
 def past_invoice_screen():

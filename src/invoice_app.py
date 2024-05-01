@@ -9,7 +9,7 @@ from xhtml2pdf import pisa                      # type: ignore
 from colored import Fore, Back, Style, attr     # type: ignore
 from pyfiglet import Figlet                     # type: ignore
 
-from util.menu_ui import print_full_width_line, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body
+from util.menu_ui import print_full_width_line, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body, export_success_screen, export_failure_screen
 
 COMPANY_PROFILE_PATH = 'util/data/company_profile.csv'
 PAST_INVOICES_PATH = 'util/data/past_invoices.csv'
@@ -154,8 +154,6 @@ def collect_input_invoice():
         create_invoice_screen_body(customer_company_name=customer_company_name, customer_contact_name=customer_contact_name, customer_phone=customer_phone, customer_email=customer_email, customer_address=customer_address, invoice_number=invoice_number, invoice_due=invoice_due, items=items)
         item_name = input("Enter item name: ")
         clear_terminal()
-        if item_name.lower() == 'done':
-            break
         item['name'] = item_name
         items.append(item)  # Add the item to the items list
 
@@ -244,15 +242,12 @@ def create_new_invoice():
     
     if convert_html_to_pdf("temp_invoice.html", pdf_filename):
         save_invoice_record(customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items)
-        
-        print("\n\n\n\n")
-        print(f"\nInvoice created successfully! The PDF has been saved as {pdf_filename}")
-        print("\n\n\n")
-        print("Redirecting you to the main menu in 10 seconds...")
-        print("\n\n\n\n")
-        time.sleep(10)
+        clear_terminal()
+        export_success_screen(pdf_filename=pdf_filename)
     else:
-        print("\nFailed to create PDF. Check the HTML file for errors.")
+        export_failure_screen()
+    
+    return pdf_filename
 
 def create_html_invoice(company_name, company_address, company_phone, company_email, company_payment_details, customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items):
     template = Template("""
@@ -346,9 +341,7 @@ def save_invoice_record(customer_company_name, customer_contact_name, customer_p
         
         if not file_exists:
             writer.writeheader()
-        
-        print(items)
-        
+                
         writer.writerow({
             'Invoice Number': str(invoice_number),  # Convert to string
             'Customer Company Name': customer_company_name,
