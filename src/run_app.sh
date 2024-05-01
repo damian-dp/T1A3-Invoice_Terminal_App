@@ -1,17 +1,5 @@
 #!/bin/bash
 
-# Remove existing virtual environment
-rm -rf .venv
-
-# Create a new virtual environment
-python3 -m venv .venv
-
-# Activate the virtual environment
-source .venv/bin/activate
-
-# Install Python dependencies
-pip3 install jinja2 xhtml2pdf colored pyfiglet
-
 # Desired dimensions
 HEIGHT=35
 WIDTH=125
@@ -48,7 +36,10 @@ fi
 
 clear
 
-echo "All dependencies installed. Running app..."
+echo "Checking Python3 install. Please wait..."
 
-# Run the Python application
-python invoice_app.py
+# Make the run_invoice_app.sh script executable
+chmod +x ./scripts/check_python.sh
+
+# Run the invoice app script
+./scripts/check_python.sh

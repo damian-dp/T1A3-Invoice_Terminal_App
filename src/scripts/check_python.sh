@@ -17,10 +17,16 @@ if [ "$(printf '%s\n' "3.8" "$python_version" | sort -V | head -n1)" != "3.8" ];
     exit 1
 fi
 
-echo "Python 3.8 or newer is installed. Installing app..."
+# Check if pip3 is installed
+if ! command -v pip3 &>/dev/null; then
+    echo "Error: pip3 is not installed. Please install pip3 to run the app."
+    exit 1
+fi
+
+echo "Python 3.8 or newer and pip3 is installed. Installing dependencies..."
 
 # Make the run_invoice_app.sh script executable
-chmod +x run_invoice_app.sh
+chmod +x ./install_dependencies.sh
 
 # Run the invoice app script
-./run_invoice_app.sh
+./install_dependencies.sh
