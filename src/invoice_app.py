@@ -4,12 +4,13 @@ import csv
 import subprocess
 import curses
 import datetime
+import shutil
 from jinja2 import Template                     # type: ignore
 from xhtml2pdf import pisa                      # type: ignore
 from colored import Fore, Back, Style, attr     # type: ignore
 from pyfiglet import Figlet                     # type: ignore
 
-from util.menu_ui import print_full_width_line, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body, export_success_screen, export_failure_screen
+from util.ui_screens import print_full_width_line, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body, export_success_screen, export_failure_screen
 
 COMPANY_PROFILE_PATH = 'util/data/company_profile.csv'
 PAST_INVOICES_PATH = 'util/data/past_invoices.csv'
@@ -65,7 +66,10 @@ def app():
         elif choice == '3':
             view_and_update_company_profile()
         elif choice == '4':
-            print("Exiting the application.")
+            venv_path = ".venv"
+            if os.path.exists(venv_path):
+                shutil.rmtree(venv_path)
+            
             clear_terminal()
             break
         else:
