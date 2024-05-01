@@ -10,10 +10,10 @@ from xhtml2pdf import pisa                      # type: ignore
 from colored import Fore, Back, Style, attr     # type: ignore
 from pyfiglet import Figlet                     # type: ignore
 
-from util.ui_screens import print_full_width_line, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body, export_success_screen, export_failure_screen
+from utils.ui_screens import print_full_width_line, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body, export_success_screen, export_failure_screen
 
-COMPANY_PROFILE_PATH = 'util/data/company_profile.csv'
-PAST_INVOICES_PATH = 'util/data/past_invoices.csv'
+COMPANY_PROFILE_PATH = '../data/company_profile.csv'
+PAST_INVOICES_PATH = '../data/past_invoices.csv'
 
 def resize_terminal():
     # The command to resize the terminal window
@@ -314,27 +314,41 @@ def create_html_invoice(company_name, company_address, company_phone, company_em
     )
 
 def save_html_to_file(html_filename, html_content):
-    with open(html_filename, "w") as html_file:
+    # Check if the directory exists, if not, create it
+    temp_dir = "temp"
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+
+    # Join the temp directory with the HTML filename
+    html_path = os.path.join(temp_dir, html_filename)
+
+    with open(html_path, "w") as html_file:
         html_file.write(html_content)
+
+    return html_path  # Return the full path to the HTML file
 
 def convert_html_to_pdf(html_filename, pdf_filename):
     try:
+        # Save the HTML content to a file in the temp directory
+        html_path = save_html_to_file(html_filename, "html_content")
+
         # Check if the directory exists, if not, create it
-        output_dir = "Invoice Exports"
+        output_dir = os.path.join("..", "src", "Invoice Exports")
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
         # Join the output directory with the PDF filename
         pdf_path = os.path.join(output_dir, pdf_filename)
 
-        with open(html_filename, "r") as html_file, open(pdf_path, "wb") as pdf_file:
+        with open(html_path, "r") as html_file, open(pdf_path, "wb") as pdf_file:
             pisa_status = pisa.CreatePDF(html_file, dest=pdf_file)
             return pisa_status.err == 0
     except Exception as e:
         print(f"Error during PDF conversion: {str(e)}")
         return False
     finally:
-        os.remove(html_filename)
+        # Remove the temp directory and all its contents
+        shutil.rmtree("temp")
         
 def save_invoice_record(customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items):
     file_exists = os.path.isfile(PAST_INVOICES_PATH)
