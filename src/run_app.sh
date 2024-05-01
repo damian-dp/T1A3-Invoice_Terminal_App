@@ -39,7 +39,7 @@ clear
 echo "Checking Python3 install. Please wait..."
 
 # Make the run_invoice_app.sh script executable
-chmod +x ./scripts/check_python.sh
+chmod +x scripts/check_python.sh
 
 # Run the invoice app script
-./scripts/check_python.sh
+scripts/check_python.sh

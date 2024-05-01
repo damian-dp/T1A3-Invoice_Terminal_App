@@ -26,7 +26,7 @@ fi
 echo "Python 3.8 or newer and pip3 is installed. Installing dependencies..."
 
 # Make the run_invoice_app.sh script executable
-chmod +x ./install_dependencies.sh
+chmod +x ./scripts/install_dependencies.sh
 
 # Run the invoice app script
-./install_dependencies.sh
+./scripts/install_dependencies.sh

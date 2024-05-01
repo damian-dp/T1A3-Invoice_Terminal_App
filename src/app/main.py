@@ -12,8 +12,8 @@ from pyfiglet import Figlet                     # type: ignore
 
 from utils.ui_screens import print_full_width_line, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body, export_success_screen, export_failure_screen
 
-COMPANY_PROFILE_PATH = '../data/company_profile.csv'
-PAST_INVOICES_PATH = '../data/past_invoices.csv'
+COMPANY_PROFILE_PATH = '../src/data/company_profile.csv'
+PAST_INVOICES_PATH = '../src/data/past_invoices.csv'
 
 def resize_terminal():
     # The command to resize the terminal window
@@ -53,7 +53,7 @@ def clear_terminal():
 def app():
     # Check onboarding status at the start of the app
     check_onboarding()
-    
+
     # Menu loop
     while True:
         main_menu_screen()
@@ -66,11 +66,12 @@ def app():
         elif choice == '3':
             view_and_update_company_profile()
         elif choice == '4':
-            venv_path = ".venv"
-            if os.path.exists(venv_path):
-                shutil.rmtree(venv_path)
-            
-            clear_terminal()
+            # Add execute permissions to the shut_down.sh script
+            subprocess.run(['chmod', '+x', 'scripts/shut_down.sh'])
+
+            # Call the shell script to deactivate and delete the virtual environment
+            subprocess.run(['bash', 'scripts/shut_down.sh'])
+
             break
         else:
             print("Invalid choice, please enter 1, 2, 3, or 4.")
