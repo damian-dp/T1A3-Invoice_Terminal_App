@@ -95,14 +95,40 @@ def main_menu_screen():
     
     print_full_width_line(Fore.dark_gray)
 
-def create_invoice_screen():
+def create_invoice_screen_header():
     
     mixed_align_text(
         "", "Create New Invoice", "",
         Fore.RED, Fore.white, Fore.dark_gray
     )
+    print_full_width_line(Fore.dark_gray)
     
-    print(Figlet(font='big').renderText('NEW INVOICE'))
+    print("\n")
+    
+    # print(Figlet(font='big').renderText('NEW INVOICE'))
+    print(centre_figlet_text("NEW INVOICE", 'big'))  #doh big
+    
+def create_invoice_screen_body(customer_company_name=None, customer_contact_name=None, customer_phone=None, customer_email=None, customer_address=None, invoice_number=None, invoice_due=None, items=None):
+    print(centre_align_text(f"{Fore.dark_gray}─────────────────────────{Style.reset} Customer Details {Fore.dark_gray}─────────────────────────{Style.reset}\n"))
+    print(f"                            {Style.BOLD}{Fore.dark_gray}{'Customer Company: '}{Style.reset}{customer_company_name if customer_company_name is not None else '':<13}     {Style.BOLD}{Fore.dark_gray}{'Contact Name: '}{Style.reset}{customer_contact_name if customer_contact_name is not None else '':<30}")
+    print(f"                            {Style.BOLD}{Fore.dark_gray}{'Customer Phone: '}{Style.reset}{customer_phone if customer_phone is not None else '':<15}     {Style.BOLD}{Fore.dark_gray}{'Contact Email: '}{Style.reset}{customer_email if customer_email is not None else '':<30}")
+    print(f"                            {Style.BOLD}{Fore.dark_gray}{'Customer Address: '}{Style.reset}{customer_address if customer_address is not None else '':<30}")
+    print("\n\n")
+
+    print(centre_align_text(f"{Fore.dark_gray}─────────────────────────{Style.reset} Invoice Details {Fore.dark_gray}──────────────────────────{Style.reset}\n"))
+    print(f"                            {Style.BOLD}{Fore.dark_gray}{'Invoice Number: '}{Style.reset}{invoice_number if invoice_number is not None else '':<15}     {Style.BOLD}{Fore.dark_gray}{'Due Date: '}{Style.reset}{invoice_due if invoice_due is not None else '':<30}")
+    print("\n\n")
+
+    print(centre_align_text(f"{Fore.dark_gray}──────────────────────────{Style.reset} Invoice Items {Fore.dark_gray}───────────────────────────{Style.reset}\n"))
+    
+    if items is None or not items:
+        items = [{'name': '', 'price': ''}]
+    for item in items:
+        print(f"                            {Style.BOLD}{Fore.dark_gray}{'Item: '}{Style.reset}{item['name'] if item['name'] is not None else '':<25}     {Style.BOLD}{Fore.dark_gray}{'Price: '}{Style.reset}{item['price'] if item['price'] is not None else '':<30}")
+
+    print("\n\n")
+    print_full_width_line(Fore.dark_gray)
+
 
 
 def past_invoice_screen():

@@ -9,7 +9,7 @@ from xhtml2pdf import pisa                      # type: ignore
 from colored import Fore, Back, Style, attr     # type: ignore
 from pyfiglet import Figlet                     # type: ignore
 
-from util.menu_ui import main_menu_screen, create_invoice_screen, print_full_width_line
+from util.menu_ui import print_full_width_line, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body
 
 COMPANY_PROFILE_PATH = 'util/data/company_profile.csv'
 PAST_INVOICES_PATH = 'util/data/past_invoices.csv'
@@ -105,53 +105,96 @@ def onboarding():
         print(f"Failed to save company profile: {str(e)}")
         
 def collect_input_invoice():
-    clear_terminal()
     resize_terminal()
-    create_invoice_screen()
+    time.sleep(0.5)
+    clear_terminal()
     
-    print("\n========== Customer Details ==========\n")
-    customer_company_name = input("Enter customer company name: ")
-    customer_contact_name = input("Enter customer contact name: ")
-    customer_phone = input("Enter customer phone number: ")
-    customer_email = input("Enter customer email: ")
-    customer_address = input("Enter customer address: ")
-    print("\n")
-    
-    print_full_width_line(Fore.dark_gray)
-    print("\n========== Invoice Details ==========\n")
-    invoice_number = input("Enter invoice number: ")
-    invoice_due = input("Enter invoice due date (DD/MM/YY): ")
-    print("\n")
-    
-    print_full_width_line(Fore.dark_gray)
-    print("\n========== Add Invoice Items ==========")
     items = []
 
+    create_invoice_screen_header()
+    create_invoice_screen_body(items=items)
+    customer_company_name = input("Enter customer company name: ")
+    clear_terminal()
+    
+    create_invoice_screen_header()
+    create_invoice_screen_body(customer_company_name=customer_company_name, items=items)
+    customer_contact_name = input("Enter customer contact name: ")
+    clear_terminal()
+    
+    create_invoice_screen_header()
+    create_invoice_screen_body(customer_company_name=customer_company_name, customer_contact_name=customer_contact_name, items=items)
+    customer_phone = input("Enter customer phone number: ")
+    clear_terminal()
+    
+    create_invoice_screen_header()
+    create_invoice_screen_body(customer_company_name=customer_company_name, customer_contact_name=customer_contact_name, customer_phone=customer_phone, items=items)
+    customer_email = input("Enter customer email: ")
+    clear_terminal()
+    time.sleep(0.1)
+    
+    create_invoice_screen_header()
+    create_invoice_screen_body(customer_company_name=customer_company_name, customer_contact_name=customer_contact_name, customer_phone=customer_phone, customer_email=customer_email, items=items)
+    customer_address = input("Enter customer address: ")
+    clear_terminal()
+    time.sleep(0.1)
+   
+    create_invoice_screen_header()
+    create_invoice_screen_body(customer_company_name=customer_company_name, customer_contact_name=customer_contact_name, customer_phone=customer_phone, customer_email=customer_email, customer_address=customer_address, items=items)
+    invoice_number = input("Enter invoice number: ")
+    clear_terminal()
+    
+    create_invoice_screen_header()
+    create_invoice_screen_body(customer_company_name=customer_company_name, customer_contact_name=customer_contact_name, customer_phone=customer_phone, customer_email=customer_email, customer_address=customer_address, invoice_number=invoice_number, items=items)
+    invoice_due = input("Enter invoice due date (DD/MM/YY): ")
+    clear_terminal()
+    
     while True:
-        print("\n")
+        item = {'name': '', 'price': '', 'description': ''}
+        create_invoice_screen_header()
+        create_invoice_screen_body(customer_company_name=customer_company_name, customer_contact_name=customer_contact_name, customer_phone=customer_phone, customer_email=customer_email, customer_address=customer_address, invoice_number=invoice_number, invoice_due=invoice_due, items=items)
         item_name = input("Enter item name: ")
+        clear_terminal()
         if item_name.lower() == 'done':
             break
+        item['name'] = item_name
+        items.append(item)  # Add the item to the items list
 
+        create_invoice_screen_header()
+        create_invoice_screen_body(customer_company_name=customer_company_name, customer_contact_name=customer_contact_name, customer_phone=customer_phone, customer_email=customer_email, customer_address=customer_address, invoice_number=invoice_number, invoice_due=invoice_due, items=items)
         item_description = input("Enter item description: ")
+        clear_terminal()
+        item['description'] = item_description
+        items[-1] = item  # Update the last item in the items list
 
         while True:
             try:
+                create_invoice_screen_header()
+                create_invoice_screen_body(customer_company_name=customer_company_name, customer_contact_name=customer_contact_name, customer_phone=customer_phone, customer_email=customer_email, customer_address=customer_address, invoice_number=invoice_number, invoice_due=invoice_due, items=items)
                 item_price = float(input("Enter item price: "))
+                item['price'] = item_price
+                items[-1] = item  # Update the last item in the items list
                 break  # Exit the inner loop if the price is correctly entered
             except ValueError:
                 print("Invalid price. Please enter a valid number.")
 
-        # Append the item as a dictionary to the items list
-        items.append({'name': item_name, 'description': item_description, 'price': item_price})
-        
-        print("\n")
-        # Ask the user if they want to add another item
+        create_invoice_screen_header()
+        create_invoice_screen_body(customer_company_name=customer_company_name, customer_contact_name=customer_contact_name, customer_phone=customer_phone, customer_email=customer_email, customer_address=customer_address, invoice_number=invoice_number, invoice_due=invoice_due, items=items)
         continue_adding = input(f"{Fore.light_gray}Would you like to add another item? (yes/no): {Style.reset}")
-        if continue_adding.lower() != 'yes':
-            break
-    
-    return customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items 
+        if continue_adding.lower() == 'yes':
+            clear_terminal()  # Clear the terminal before adding another item
+        else:
+            break  # Exit the outer loop if the user is done adding items
+
+    return {
+        'customer_company_name': customer_company_name,
+        'customer_contact_name': customer_contact_name,
+        'customer_phone': customer_phone,
+        'customer_email': customer_email,
+        'customer_address': customer_address,
+        'invoice_number': invoice_number,
+        'invoice_due': invoice_due,
+        'items': items
+    }
 
 def create_new_invoice():
     
@@ -174,11 +217,19 @@ def create_new_invoice():
         onboarding()
         company_profile = read_company_profile()
 
+    invoice_data = collect_input_invoice()
+    
+    customer_company_name = invoice_data['customer_company_name']
+    customer_contact_name = invoice_data['customer_contact_name']
+    customer_phone = invoice_data['customer_phone']
+    customer_email = invoice_data['customer_email']
+    customer_address = invoice_data['customer_address']
+    invoice_number = invoice_data['invoice_number']
+    invoice_due = invoice_data['invoice_due']
+    items = invoice_data['items']
         
     company_name, company_address, company_phone, company_email, company_payment_details = read_company_profile()
-            
-    customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items = collect_input_invoice()
-    
+                
     html_content = create_html_invoice(
         company_name, company_address, company_phone, company_email, company_payment_details,
         customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address,
@@ -295,6 +346,8 @@ def save_invoice_record(customer_company_name, customer_contact_name, customer_p
         
         if not file_exists:
             writer.writeheader()
+        
+        print(items)
         
         writer.writerow({
             'Invoice Number': str(invoice_number),  # Convert to string
