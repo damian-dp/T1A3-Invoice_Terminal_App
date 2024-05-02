@@ -165,6 +165,21 @@ This project adheres to the [PEP 8](https://pep8.org/) style guide for Python co
 
 <br>
 
+## Code Logic
+
+Below you will find a logic flowchart and a detailed pseudocode outline of my app. Both were created before developing my implementation plan or begining to code.
+
+#### Pseudocode:
+- [App Pseudocode File](docs/app_pseudocode.txt)
+
+
+#### Logic Flowchart:
+
+![Logic Flowchart](docs/logic_flow_diagram.jpg)
+
+<br>
+
+
 ## Implementation Plan
 
 The implementation plan can be [viewed on trello](https://trello.com). I have also broken it down into a list below:

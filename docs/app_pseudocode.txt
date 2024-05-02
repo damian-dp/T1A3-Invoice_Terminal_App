@@ -1,0 +1,135 @@
+Bussiness Logic:
+
+- Define main application function
+    - Clear terminal and check onboarding status
+    - Loop for main menu
+        - Display main menu and get user choice
+        - Execute action based on user choice
+
+- Define function to check onboarding status
+    - Check if company profile file exists
+    - If exists, read and return company profile
+    - If not, start onboarding
+
+- Define function for onboarding
+    - Collect company details from user
+    - Write company details to file
+
+- Define function to collect invoice details
+    - Collect customer and invoice details from user
+    - Collect item details from user
+    - Return all collected details
+
+- Define function to create HTML invoice
+    - Define HTML template with placeholders
+    - Fill placeholders with provided details
+    - Return filled HTML
+
+- Define function to create new invoice
+    - Read company profile
+    - If company profile not found, start onboarding and read again
+    - Collect invoice details
+    - Create HTML invoice
+    - Save HTML to file
+    - Convert HTML to PDF
+    - Save invoice record
+    - Display success or failure message
+
+- Define function to view and manage past invoices
+    - Try to read the past invoices via CSV file
+        - If an error occurs, print an error message
+    - Display the past invoices
+    - Ask the user for the number of the invoice to manage or to type 'back'
+    - If the user types 'back', return
+    - If the user input is a digit, convert it to an index
+        - If the index is valid, ask for an action (delete or re-export to PDF)
+            - If the user chooses to delete, ask for confirmation and call the `delete_invoice_record` function if confirmed
+            - If the user chooses to re-export, call the `re_export_to_pdf` function
+        - If the index is not valid, print an error message
+    - If the user input is not a digit, print an error message
+
+- Define function to re-export past invoices to PDF
+    - Parse the items from the invoice
+    - Create the HTML content for the invoice
+    - Check if the output directory exists, if not, create it
+    - Save the HTML content to a file
+    - Convert the HTML to PDF
+        - If successful, print a success message
+        - If not successful, print an error message
+    - If an error occurs, print an error message
+
+- Define function to delete past invoice records
+    - Read the past invoices into a list from CSV file
+    - Write all invoices except the one to delete back to the CSV file
+    - Print a success message
+    - If an error occurs, print an error message
+
+- Define function to view and update company profile
+    - Check if the company profile file exists
+        - If not, print a message and call `onboarding` function
+    - Display the current company details
+    - Start a loop for interactive update of company details
+        - Ask the user for the number of the detail to update or to type 'back' to finish editing
+        - If the user types 'back', break the loop
+        - If the user input is a digit, convert it to an index
+            - If the index is valid, ask for the new value and update the company data
+            - If the index is not valid, print an error message
+        - If the user input is not a digit, print an error message
+    - Try to write the updated details back to the CSV file
+        - If an error occurs, print an error message
+        - If success print a success message
+    - Return user to main menu loop
+
+
+
+Style and UI:
+
+- Define function to resize terminal
+    - Define resize command
+    - Execute resize command
+    - Initialize curses
+    - Try to resize terminal using curses
+    - End curses
+
+- Define function to clear terminal
+    - Define clear command based on operating system
+    - Execute clear command
+
+- Define function to centre align text
+    - Define function to get visible length of text
+    - Get terminal width
+    - Calculate visible length of text
+    - Calculate padding needed
+    - Apply padding and return centred text
+
+- Define function to right align text
+    - Get terminal width
+    - Right align text and return
+
+- Define function to align text in mixed manner
+    - Get terminal width
+    - Calculate width for each part of line
+    - Format each part of line with custom colours
+    - Combine parts into one line and print
+
+- Define function to centre figlet text
+    - Create Figlet object with specified font
+    - Generate figlet text
+    - Centre each line of figlet text and return
+
+- Define function to print full width line
+    - Get terminal width
+    - Create full-width line
+    - Apply color and print
+
+- Define UI screens for different stages of application
+    - Onboarding screen
+    - Onboarding success screen
+    - Onboarding failure screen
+    - Main menu screen
+    - Create invoice screen header
+    - Create invoice screen body
+    - Export success screen
+    - Export failure screen
+    - Past invoice screen
+    - Copany Profile screen
