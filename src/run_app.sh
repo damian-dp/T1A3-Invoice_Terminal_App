@@ -35,11 +35,9 @@ if ! resize_terminal && ! printf_resize && ! xterm_resize; then
 fi
 
 clear
-
-echo "Checking Python3 install. Please wait..."
-
-# Make the run_invoice_app.sh script executable
+ 
+# Make the check_python.sh script executable
 chmod +x scripts/check_python.sh
 
-# Run the invoice app script
+# Run the check python script
 scripts/check_python.sh
