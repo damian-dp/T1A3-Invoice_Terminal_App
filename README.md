@@ -1,4 +1,4 @@
-# Invoice App – T1A3
+# Invoice Terminal App – T1A3
 
 Welcome to my Invoice App, a terminal-based application designed to generate and manage invoices. This application is built with Python.
 
@@ -12,12 +12,87 @@ In the app you can:
 
 The app is designed to be easy to install and use, with automatic installation of dependencies and a clear, intuitive user interface.
 
+<br>
+
+## Installation
+
+### Unix-based Systems (macOS, Linux)
+
+1. Open a terminal.
+
+2. Clone the GitHub repository:
+    ```sh
+    git clone <URL of your GitHub repository>
+    ```
+
+<br>
+
+3. Navigate to the `/src` directory in the cloned repository:
+    ```sh
+    cd T1A3-Invoice_Terminal_App/src
+    ```
+
+<br>
+
+4. Add execute permissions to the run_app.sh script:
+    ```sh
+    chmod +x run_app.sh
+    ```
+
+<br>
+
+5. Run the run_app.sh script to start the application:
+    ```sh
+    ./src/run_app.sh
+    ```
+
+<br>
+
+### Windows
+1. Install [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install).
+
+2. Open a WSL terminal.
+
+3. Clone the GitHub repository via SSH:
+    ```sh
+    git clone git@github.com:damian-dp/T1A3-Invoice_Terminal_App.git
+    ```
+    or via HTTPS:
+
+    ```sh
+    git clone https://github.com/damian-dp/T1A3-Invoice_Terminal_App.git
+    ```
+
+<br>
+
+4. Navigate to the `/src` directory in the cloned repository:
+    ```sh
+    cd T1A3-Invoice_Terminal_App/src
+    ```
+
+<br>
+
+5. Add execute permissions to the run_app.sh script:
+    ```sh
+    chmod +x run_app.sh
+    ```
+
+<br>
+
+6. Run the run_app.sh script to start the application:
+    ```sh
+    ./run_app.sh
+    ```
+
+<br>
+
 ## Prerequisites
 
 - Python 3
 - Bash (pre-installed on Unix-based systems, available on Windows via WSL)
 - Git
 
+<br>
 
 ## Dependencies
 
@@ -33,54 +108,7 @@ This application uses the following Python libraries:
 
 These dependencies are automatically installed when you run the `run_app.sh` script.
 
-
-## Installation
-
-### Unix-based Systems (macOS, Linux)
-
-1. Open a terminal.
-
-2. Clone the GitHub repository:
-```sh
-git clone <URL of your GitHub repository>
-```
-
-3. Navigate to the root directory of the cloned repository:
-```sh
-cd DamianPetrov_T1A3
-```
-
-4. Run the run_app.sh script to start the application:
-```sh
-./src/run_app.sh
-```
-
-
-### Windows
-1. Install [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install).
-
-2. Open a WSL terminal.
-
-2. Clone the GitHub repository:
-```sh
-git clone <URL of your GitHub repository>
-```
-
-3. Navigate to the `/src` directory of the cloned repository:
-```sh
-cd DamianPetrov_T1A3/src
-```
-
-4. Add execute permissions to the run_app.sh script:
-```sh
-chmod +x run_app.sh
-```
-
-5. Run the run_app.sh script to start the application:
-```sh
-./run_app.sh
-```
-
+<br>
 
 ## Usage
 
@@ -96,6 +124,7 @@ After running the `run_app.sh` script, you will be presented with a main menu of
 
 Please note that you need to enter the number of the option you want to select. If you enter an invalid choice, the application will display a message and prompt you to enter a valid choice.
 
+<br>
 
 ## Features
 
@@ -121,11 +150,13 @@ This application includes the following features:
     
     - The `shut_down.sh` script is run by the Python app `app.py` when the user selects to exit the app from the main menu. This script deactivates the virtual environment and deletes it. It then thanks the user for using the app!
 
+<br>
 
 ## Code Style Guide
 
 This project adheres to the [PEP 8](https://pep8.org/) style guide for Python code. PEP 8 is a set of recommendations for how to format Python code to improve its readability and consistency. It covers topics such as indentation, variable naming, and line length.
 
+<br>
 
 ## Implementation Plan
 
@@ -190,6 +221,8 @@ The implementation plan can be [viewed on trello](https://trello.com). I have al
 - **Development Plan**: A detailed plan of your development process. This should include the tasks you completed, any challenges you faced, and how you overcame them.
 
 - **License Information**: Information about the license your project is under. This tells others what they can and can't do with your code.
+
+<br>
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
