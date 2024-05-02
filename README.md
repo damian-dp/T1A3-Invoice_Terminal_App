@@ -12,6 +12,8 @@ In the app you can:
 
 The app is designed to be easy to install and use, with automatic installation of dependencies and a clear, intuitive user interface.
 
+You can view the [GitHub repository here](https://github.com/damian-dp/T1A3-Invoice_Terminal_App).
+
 <br>
 
 ## Installation
@@ -20,9 +22,14 @@ The app is designed to be easy to install and use, with automatic installation o
 
 1. Open a terminal.
 
-2. Clone the GitHub repository:
+2. Clone the GitHub repository via SSH:
     ```sh
-    git clone <URL of your GitHub repository>
+    git clone git@github.com:damian-dp/T1A3-Invoice_Terminal_App.git
+    ```
+    or via HTTPS:
+
+    ```sh
+    git clone https://github.com/damian-dp/T1A3-Invoice_Terminal_App.git
     ```
 
 <br>

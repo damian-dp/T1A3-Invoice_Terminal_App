@@ -7,10 +7,9 @@ import datetime
 import shutil
 from jinja2 import Template                     # type: ignore
 from xhtml2pdf import pisa                      # type: ignore
-from colored import Fore, Back, Style, attr     # type: ignore
-from pyfiglet import Figlet                     # type: ignore
+from colored import Fore, Back, Style           # type: ignore
 
-from utils.ui_screens import print_full_width_line, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body, export_success_screen, export_failure_screen
+from utils.ui_screens import print_full_width_line, onbaording_screen, onboarding_success_screen, onboarding_failure_screen, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body, export_success_screen, export_failure_screen
 
 COMPANY_PROFILE_PATH = '../src/data/company_profile.csv'
 PAST_INVOICES_PATH = '../src/data/past_invoices.csv'
@@ -52,6 +51,7 @@ def clear_terminal():
 
 def app():
     # Check onboarding status at the start of the app
+    clear_terminal()
     check_onboarding()
 
     # Menu loop
@@ -87,10 +87,25 @@ def check_onboarding():
         return onboarding()
     
 def onboarding():
+    clear_terminal()
+    
+    onbaording_screen()
     company_name = input("Enter your company name: ")
-    company_address = input("Enter your company address: ")
-    company_phone = input("Enter your company phone number: ")
+    clear_terminal()
+    
+    onbaording_screen(company_name=company_name)
     company_email = input("Enter your company email: ")
+    clear_terminal()
+    
+    onbaording_screen(company_name=company_name, company_email=company_email)
+    company_phone = input("Enter your company phone number: ")
+    clear_terminal()
+    
+    onbaording_screen(company_name=company_name, company_email=company_email, company_phone=company_phone)
+    company_address = input("Enter your company address: ")
+    clear_terminal()
+    
+    onbaording_screen(company_name=company_name, company_email=company_email, company_phone=company_phone, company_address=company_address)
     company_payment_details = input("Enter payment details and instructions that will be displayed on your invoices: ")
     
     # Check if the file exists
@@ -104,10 +119,12 @@ def onboarding():
             writer.writerow(['Company Name', 'Address', 'Phone', 'Email', 'Payment Details'])
             writer.writerow([company_name, company_address, company_phone, company_email, company_payment_details])
         
-        print("Company profile saved.")
+        clear_terminal()
+        onboarding_success_screen()
         
     except IOError as e:
-        print(f"Failed to save company profile: {str(e)}")
+        clear_terminal()
+        onboarding_failure_screen(error_code=e)
         
 def collect_input_invoice():
     resize_terminal()
@@ -250,6 +267,7 @@ def create_new_invoice():
         clear_terminal()
         export_success_screen(pdf_filename=pdf_filename)
     else:
+        clear_terminal()
         export_failure_screen()
     
     return pdf_filename

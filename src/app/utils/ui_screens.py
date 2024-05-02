@@ -1,8 +1,8 @@
 import os
 import re
 import time
-from colored import Fore, Back, Style, attr     # type: ignore
-from pyfiglet import Figlet                     # type: ignore
+from colored import Fore, Back, Style     # type: ignore
+from pyfiglet import Figlet               # type: ignore
 
 def centre_align_text(text):
     # Function to remove ANSI escape sequences to get the visible length of the text
@@ -73,6 +73,93 @@ def print_full_width_line(color=Fore.WHITE):
     print(colored_line)
 
 # Screens
+
+def onbaording_screen(company_name=None, company_email=None, company_phone=None, company_address=None, company_payment_details=None):
+    mixed_align_text(
+        "", "Onboarding", "",
+        Fore.RED, Fore.white, Fore.dark_gray
+    )
+    print_full_width_line(Fore.dark_gray)
+    
+    print("\n\n")
+    
+    # print(Figlet(font='big').renderText('NEW INVOICE'))
+    print(centre_figlet_text("Welcome", 'big'))  #doh big
+    
+    print("\n")
+    
+    print(centre_align_text(f"To get started we need to create your company profile."))
+    print('\n')
+    print(centre_align_text(f"{Fore.dark_gray}This information will be used to populate invoices automatically with your {Style.reset}"))
+    print(centre_align_text(f"{Fore.dark_gray}company details. You can edit your company profile anytime via the main menu.{Style.reset}"))
+
+    print("\n\n\n")
+
+    print(centre_align_text(f"{Fore.dark_gray}─────────────────────────────{Style.reset} Company Profile {Fore.dark_gray}─────────────────────────────{Style.reset}\n"))
+    print(f"                        {Style.BOLD}{Fore.dark_gray}{'Company Name: '}{Style.reset}{company_name if company_name is not None else '':<21}     {Style.BOLD}{Fore.dark_gray}{'Company email: '}{Style.reset}{company_email if company_email is not None else '':<30}")
+    print(f"                        {Style.BOLD}{Fore.dark_gray}{'Company Phone: '}{Style.reset}{company_phone if company_phone is not None else '':<20}     {Style.BOLD}{Fore.dark_gray}{'Company Address: '}{Style.reset}{company_address if company_address is not None else '':<30}")
+    print(f"                        {Style.BOLD}{Fore.dark_gray}{'Payment Details: '}{Style.reset}{company_payment_details if company_payment_details is not None else '':<40}")
+    print("\n\n")
+
+    print_full_width_line(Fore.dark_gray)
+
+def onboarding_success_screen():
+    
+    mixed_align_text(
+        "", "Company Profile Created", "",
+        Fore.RED, Fore.white, Fore.dark_gray
+    )
+    print_full_width_line(Fore.dark_gray)
+    
+    print("\n\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"{Fore.green}Company profile created successfully!{Style.reset}"))
+    
+    print("\n")
+    
+    print(centre_align_text(f"You can update your company profile"))
+    print(centre_align_text(f"at any time via the main menu."))
+    
+    print("\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"Redirecting you to the main menu in 10 seconds..."))
+    
+    print("\n")
+
+    print_full_width_line(Fore.dark_gray)
+
+    time.sleep(10)
+
+def onboarding_failure_screen(error_code=None):
+    
+    mixed_align_text(
+        "", "Failed to Create Company Profile", "",
+        Fore.RED, Fore.white, Fore.dark_gray
+    )
+    print_full_width_line(Fore.dark_gray)
+    
+    print("\n\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"{Fore.red}An error occurred while creating your company profile.{Style.reset}"))
+    
+    print("\n")
+    
+    print(centre_align_text(f"Failed to save company profile: {str(error_code)}"))
+    print(centre_align_text(f"Please try again."))
+    
+    print("\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"Redirecting you to the main menu in 10 seconds..."))
+    
+    print("\n")
+
+    print_full_width_line(Fore.dark_gray)
+
+    time.sleep(10)
+
+
+
+
 def main_menu_screen():
     mixed_align_text(
         "", "Main Menu", "Onboarding complete",
