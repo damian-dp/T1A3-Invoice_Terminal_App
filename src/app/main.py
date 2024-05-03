@@ -364,7 +364,7 @@ def save_html_to_file(html_filename, html_content):
 def convert_html_to_pdf(html_filename, pdf_filename):
     try:
         # Save the HTML content to a file in the temp directory
-        html_path = save_html_to_file(html_filename, "html_content")
+        html_path = os.path.join("temp", html_filename)
 
         # Check if the directory exists, if not, create it
         output_dir = os.path.join("..", "src", "Invoice Exports")
