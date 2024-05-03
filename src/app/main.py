@@ -9,7 +9,7 @@ from jinja2 import Template                     # type: ignore
 from xhtml2pdf import pisa                      # type: ignore
 from colored import Fore, Back, Style           # type: ignore
 
-from utils.ui_screens import print_full_width_line, onbaording_screen, onboarding_success_screen, onboarding_failure_screen, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body, export_success_screen, export_failure_screen
+from utils.ui_screens import print_full_width_line, centre_align_text, onbaording_screen, onboarding_success_screen, onboarding_failure_screen, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body, export_success_screen, export_failure_screen, past_invoice_screen_header, deletion_success_screen, no_past_invoices_screen, profile_screen, exit_screen
 
 COMPANY_PROFILE_PATH = '../src/data/company_profile.csv'
 PAST_INVOICES_PATH = '../src/data/past_invoices.csv'
@@ -66,13 +66,28 @@ def app():
         elif choice == '3':
             view_and_update_company_profile()
         elif choice == '4':
-            # Add execute permissions to the shut_down.sh script
-            subprocess.run(['chmod', '+x', 'scripts/shut_down.sh'])
+            clear_terminal()
+            exit_screen()
+            
+            confirm = input("Would you like to exit? (yes/no): ")
+            
+            if confirm.lower() == 'yes':
+                clear_terminal()
+                # Add execute permissions to the shut_down.sh script
+                subprocess.run(['chmod', '+x', 'scripts/shut_down.sh'])
 
-            # Call the shell script to deactivate and delete the virtual environment
-            subprocess.run(['bash', 'scripts/shut_down.sh'])
+                # Call the shell script to deactivate and delete the virtual environment
+                subprocess.run(['bash', 'scripts/shut_down.sh'])
 
-            break
+                break
+            
+            elif confirm.lower() == 'no':
+                clear_terminal()
+                main_menu_screen()
+                
+            else:
+                print("Invalid choice, please enter 'yes' or 'no'.")
+            
         else:
             print("Invalid choice, please enter 1, 2, 3, or 4.")
             
@@ -393,40 +408,144 @@ def save_invoice_record(customer_company_name, customer_contact_name, customer_p
 def view_past_invoices():
     while True:
         clear_terminal()
-        print("\n========== View Past Invoices ==========\n")
         try:
             with open(PAST_INVOICES_PATH, 'r') as file:
                 reader = csv.DictReader(file)
                 invoices = list(reader)
+                
+                past_invoice_screen_header()
+                
                 for idx, row in enumerate(invoices):
-                    print(f"{idx + 1}. INV# {row['Invoice Number']} | {row['Customer Company Name']} | Due: {row['Invoice Due Date']}")
+                    print(f"{Style.BOLD}{Fore.white}                               {idx + 1}.{Style.reset}{Fore.white}  INV# {Fore.dark_gray}{row['Invoice Number']:<10}    {Fore.white}Customer: {Fore.dark_gray}{row['Customer Company Name']:<15}  {Fore.white}Due: {Fore.dark_gray}{row['Invoice Due Date']}")
+                    print(f"{Fore.dark_gray}                               ───────────────────────────────────────────────────────────────{Style.reset}")
 
-            print("\n")
+            num_invoices = len(invoices)
+            if num_invoices == 1:
+                print("\n" * 7)
+            elif num_invoices == 2:
+                print("\n" * 4)
+                print("")
+            elif num_invoices == 3:
+                print("\n" * 3)
+            elif num_invoices == 4:
+                print("\n")
+            elif num_invoices == 5:
+                print("")
+            else:
+                print("")
 
-            choice = input("Enter the number of the invoice you would like to manage or type 'back': ")
+            print(centre_align_text(f"{Fore.dark_gray}Enter the line number of the invoice you would like to manage.{Style.reset}"))
+            
+            if num_invoices <= 4:
+                print("")
+            elif num_invoices == 5:
+                pass
+            else:
+                print("")
+            
+            print_full_width_line(Fore.dark_gray)
+            
+            choice = input("Line number or 'back': ")
+            
             if choice.lower() == 'back':
                 return
             else:
                 invoice_index = int(choice) - 1  # Adjusting for zero-based indexing
                 if 0 <= invoice_index < len(invoices):
-                    print("\n1. Delete Invoice")
-                    print("2. Re-export to PDF")
-                    print("\n")
+                    
+                    with open(PAST_INVOICES_PATH, 'r') as file:
+                        reader = csv.DictReader(file)
+                        invoices = list(reader)
+                        
+                        past_invoice_screen_header()
+                        
+                        for idx, row in enumerate(invoices):
+                            print(f"{Style.BOLD}{Fore.white}                               {idx + 1}.{Style.reset}{Fore.white}  INV# {Fore.dark_gray}{row['Invoice Number']:<10}    {Fore.white}Customer: {Fore.dark_gray}{row['Customer Company Name']:<15}  {Fore.white}Due: {Fore.dark_gray}{row['Invoice Due Date']}")
+                            print(f"{Fore.dark_gray}                               ───────────────────────────────────────────────────────────────{Style.reset}")
+
+                    num_invoices = len(invoices)
+                    if num_invoices == 1:
+                        print("\n" * 7)
+                    elif num_invoices == 2:
+                        print("\n" * 4)
+                        print("")
+                    elif num_invoices == 3:
+                        print("\n" * 3)
+                    elif num_invoices == 4:
+                        print("\n")
+                    elif num_invoices == 5:
+                        print("")
+                    else:
+                        print("")
+
+                    print(centre_align_text(f"Line number {Fore.light_gray}{choice}. {Style.reset}selected. Enter {Fore.red}1 to delete{Style.reset} or {Fore.green}2 to re-export.{Style.reset}"))
+                    
+                    if num_invoices <= 4:
+                        print("")
+                    elif num_invoices == 5:
+                        pass
+                    else:
+                        print("")
+                    
+                    print_full_width_line(Fore.dark_gray)
+
                     action_choice = input("Choose an action (1-2): ")
+                    
                     if action_choice == '1':
-                        confirm = input("Are you sure you want to delete this invoice? (yes/no): ")
+                        with open(PAST_INVOICES_PATH, 'r') as file:
+                            reader = csv.DictReader(file)
+                            invoices = list(reader)
+                            
+                            past_invoice_screen_header()
+                            
+                            for idx, row in enumerate(invoices):
+                                print(f"{Style.BOLD}{Fore.white}                               {idx + 1}.{Style.reset}{Fore.white}  INV# {Fore.dark_gray}{row['Invoice Number']:<10}    {Fore.white}Customer: {Fore.dark_gray}{row['Customer Company Name']:<15}  {Fore.white}Due: {Fore.dark_gray}{row['Invoice Due Date']}")
+                                print(f"{Fore.dark_gray}                               ───────────────────────────────────────────────────────────────{Style.reset}")
+
+                        num_invoices = len(invoices)
+                        if num_invoices == 1:
+                            print("\n" * 7)
+                        elif num_invoices == 2:
+                            print("\n" * 4)
+                            print("")
+                        elif num_invoices == 3:
+                            print("\n" * 3)
+                        elif num_invoices == 4:
+                            print("\n")
+                        elif num_invoices == 5:
+                            print("")
+                        else:
+                            print("")
+
+                        print(centre_align_text(f"{Style.BOLD}{Back.red}{Fore.white}You're about to DELETE an invoice. (Line number {choice}.){Style.reset}"))
+                        
+                        if num_invoices <= 4:
+                            print("")
+                        elif num_invoices == 5:
+                            pass
+                        else:
+                            print("")
+                        
+                        print_full_width_line(Fore.dark_gray)
+                        
+                        confirm = input(f"Are you sure you want to delete this invoice? ({Fore.red}yes{Style.reset}/{Fore.green}no{Style.reset}): ")
                         if confirm.lower() == 'yes':
+                            clear_terminal()
                             delete_invoice_record(invoices[invoice_index]['Invoice Number'])
+                            deletion_success_screen()
                         else:
                             print("Deletion cancelled.")
                     elif action_choice == '2':
                         re_export_to_pdf(invoices[invoice_index])
+                        export_success_screen(pdf_filename=f"re_export_{invoices[invoice_index]['Invoice Number']}.pdf", return_menu="past invoices")
                     else:
                         print("Invalid choice.")
                 else:
                     print("Invalid choice.")
         except FileNotFoundError:
-            print("No past invoices found.")
+            clear_terminal()
+            no_past_invoices_screen()
+            break 
         except Exception as e:
             print(f"An error occurred: {str(e)}")
 
@@ -508,7 +627,7 @@ def view_and_update_company_profile():
     # Check if the company profile file exists
     if not os.path.exists(COMPANY_PROFILE_PATH):
         print("No company profile found. Please create a new one.")
-        return
+        onboarding()
 
     # Reading the current company profile data
     try:
@@ -523,14 +642,22 @@ def view_and_update_company_profile():
         print(f"Error reading the file: {str(e)}")
         return
 
-    # Display the current company details
+    
+    # Extract the fields from the company data
+    company_name = company_data['Company Name']
+    company_email = company_data['Email']
+    company_phone = company_data['Phone']
+    company_address = company_data['Address']
+    company_payment_details = company_data['Payment Details']
+
+    # Call the profile_screen function with the extracted fields
+    profile_screen(company_name, company_email, company_phone, company_address, company_payment_details)
+
     fieldnames = company_data.keys()
-    for idx, key in enumerate(fieldnames):
-        print(f"{idx + 1}. {key}: {company_data[key]}")
 
     # Interactive update of company details
     while True:
-        user_input = input("\nEnter the number of the detail to update or type 'back' to finish editing: ")
+        user_input = input("Enter detail number or 'back': ")
         if user_input.lower() == 'back':
             break
 
@@ -539,14 +666,32 @@ def view_and_update_company_profile():
             choice_index = int(user_input) - 1  # Convert to zero-based index
             if 0 <= choice_index < len(fieldnames):
                 key_to_update = list(fieldnames)[choice_index]
+                clear_terminal()
+                profile_screen(company_name, company_email, company_phone, company_address, company_payment_details)
                 new_value = input(f"Enter new value for {key_to_update}: ")
                 company_data[key_to_update] = new_value
-                print("\n========== Update Company Profile ==========\n")
-                for idx, key in enumerate(fieldnames):
-                    print(f"{idx + 1}. {key}: {company_data[key]}")
+
+                # Update the corresponding variable
+                if key_to_update == 'Company Name':
+                    company_name = new_value
+                elif key_to_update == 'Company Email':
+                    company_email = new_value
+                elif key_to_update == 'Company Phone':
+                    company_phone = new_value
+                elif key_to_update == 'Company Address':
+                    company_address = new_value
+                elif key_to_update == 'Payment Details':
+                    company_payment_details = new_value
+
+                clear_terminal()
+                profile_screen(company_name, company_email, company_phone, company_address, company_payment_details)
             else:
+                clear_terminal()
+                profile_screen(company_name, company_email, company_phone, company_address, company_payment_details)
                 print("Invalid number, please enter a valid number or type 'back'.")
         else:
+            clear_terminal()
+            profile_screen(company_name, company_email, company_phone, company_address, company_payment_details)
             print("Please enter a number or type 'back'.")
 
     # Write the updated details back to the CSV file

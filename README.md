@@ -119,7 +119,9 @@ These dependencies are automatically installed when you run the `run_app.sh` scr
 
 ## Usage
 
-After running the `run_app.sh` script, you will be presented with a main menu of options. 
+After running the `run_app.sh` script for the first time you will be presented with a welcome screen that acts as an onbaording process. This process captures and saves details that are used to populate the company info sections on generated invoices. The onbaording process will not run again the next time you start the app. You can update these details any time via the main menu.
+
+After completing the onbaording process you will be presented with a main menu of options:
 
 1. **Create a new invoice**: If you select this option by entering '1', you will be guided through the process of creating a new invoice. You will be asked to enter the customer's details, the invoice number, the due date, and the items to be invoiced. Once you have entered all the required information, the application will generate an HTML invoice, convert it to a PDF, and save the invoice information to a CSV file. The PDF invoice will be saved in the `src/Invoice Exports` directory, if the directory does not exist it will create it. The invoice information will also be appended to the `past_invoices.csv` file in the `src/data` directory for viewing and re-exporting via the main menu.
 

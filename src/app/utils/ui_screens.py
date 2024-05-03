@@ -72,6 +72,8 @@ def print_full_width_line(color=Fore.WHITE):
     # Print the colored line
     print(colored_line)
 
+
+
 # Screens
 
 def onbaording_screen(company_name=None, company_email=None, company_phone=None, company_address=None, company_payment_details=None):
@@ -159,7 +161,6 @@ def onboarding_failure_screen(error_code=None):
 
 
 
-
 def main_menu_screen():
     mixed_align_text(
         "", "Main Menu", "Onboarding complete",
@@ -182,6 +183,31 @@ def main_menu_screen():
     print("\n\n\n\n\n\n")
     
     print_full_width_line(Fore.dark_gray)
+
+def exit_screen():
+    
+    mixed_align_text(
+        "", "Exit App", "",
+        Fore.RED, Fore.white, Fore.dark_gray
+    )
+    print_full_width_line(Fore.dark_gray)
+    
+    print("\n\n\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"{Fore.white}You're about to close the app.{Style.reset}"))
+    
+    print("\n")
+    
+    print(centre_align_text(f"{Fore.white}{Back.red} Please confirm you would like to exit the app. {Style.reset}"))
+    
+    print("\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"Enter {Fore.red}'yes'{Style.reset} to exit or {Fore.green}'no'{Style.reset} to return to the main menu."))
+    
+    print("\n")
+
+    print_full_width_line(Fore.dark_gray)
+
 
 def create_invoice_screen_header():
     
@@ -217,7 +243,7 @@ def create_invoice_screen_body(customer_company_name=None, customer_contact_name
     print("\n\n")
     print_full_width_line(Fore.dark_gray)
 
-def export_success_screen(pdf_filename=None):
+def export_success_screen(pdf_filename=None, return_menu="main"):
     
     mixed_align_text(
         "", "Export Successful", "",
@@ -227,44 +253,138 @@ def export_success_screen(pdf_filename=None):
     
     print("\n\n\n\n\n\n\n\n\n\n\n")
     
-    print(centre_align_text(f"{Fore.dark_gray}Invoice created successfully!{Style.reset}"))
+    print(centre_align_text(f"{Fore.green}Invoice created successfully!{Style.reset}"))
     
     print("\n")
     
-    print(centre_align_text(f"The PDF has been saved as {Fore.green}{pdf_filename}{Style.reset}"))
-    print(centre_align_text(f"in the Invoice Exports folder."))
+    print(centre_align_text(f"{Fore.dark_gray}The PDF has been saved as {Style.reset}{Fore.green}{pdf_filename}{Style.reset}"))
+    print(centre_align_text(f"{Fore.dark_gray}in the Invoice Exports folder.{Style.reset}"))
     
     print("\n\n\n\n\n\n\n\n\n\n")
     
-    print(centre_align_text(f"Redirecting you to the main menu in 10 seconds..."))
+    print(centre_align_text(f"Returning you to the {return_menu} menu in 5 seconds..."))
     
     print("\n")
 
     print_full_width_line(Fore.dark_gray)
 
-    time.sleep(10)
+    time.sleep(8)
     
 def export_failure_screen():
-    
+        
     mixed_align_text(
         "", "Export Failed", "",
         Fore.RED, Fore.white, Fore.dark_gray
     )
     print_full_width_line(Fore.dark_gray)
     
-    print("\n\n\n\n")
-    print(centre_align_text(f"{Fore.dark_gray}An error occurred while creating the invoice.{Style.reset}"))
-    print("\n\n")
-    print(centre_align_text(f"{Fore.dark_gray}Please try again.{Style.reset}"))
-    print("\n\n\n\n")
+    print("\n\n\n\n\n\n\n\n\n\n\n")
     
-    print("Redirecting you to the main menu in 10 seconds...")
+    print(centre_align_text(f"{Fore.red}An error occurred while creating the invoice.{Style.reset}"))
+    
+    print("\n")
+    
+    print(centre_align_text(f"{Fore.dark_gray}Please try to create the invoice again via the main menu.{Style.reset}"))
+    print(centre_align_text(f"{Fore.dark_gray}If the issue continues please re-install the app and try again.{Style.reset}"))
+    
+    print("\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"Returning you to the main menu in 10 seconds..."))
+    
+    print("\n")
+
+    print_full_width_line(Fore.dark_gray)
+
     time.sleep(10)
 
 
-def past_invoice_screen():
-    pass
 
-def profile_screen():
-    pass
+def past_invoice_screen_header():
+    mixed_align_text(
+        "", "Past Invoices", "",
+        Fore.RED, Fore.white, Fore.dark_gray
+    )
+    print_full_width_line(Fore.dark_gray)
+    
+    print("\n")
+    
+    # print(Figlet(font='big').renderText('NEW INVOICE'))
+    print(centre_figlet_text("PAST INVOICES", 'big'))  #doh big
+    
+def deletion_success_screen():
+    
+    mixed_align_text(
+        "", "Deletion Successful", "",
+        Fore.RED, Fore.white, Fore.dark_gray
+    )
+    print_full_width_line(Fore.dark_gray)
+    
+    print("\n\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"{Fore.green}Invoice record deleted successfully!{Style.reset}"))
+    
+    print("\n")
+    
+    print(centre_align_text(f"{Fore.white}The Invoice record has been deleted.{Style.reset}"))
+    print(centre_align_text(f"{Fore.dark_gray}You are no longer able to re-export or view this invoice.{Style.reset}"))
+    
+    print("\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"Returning you to the past invoice menu in 5 seconds..."))
+    
+    print("\n")
 
+    print_full_width_line(Fore.dark_gray)
+
+    time.sleep(8)
+
+def no_past_invoices_screen():
+    
+    mixed_align_text(
+        "", "No Past Invoices Found", "",
+        Fore.RED, Fore.white, Fore.dark_gray
+    )
+    print_full_width_line(Fore.dark_gray)
+    
+    print("\n\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"{Fore.yellow}No past invoices found.{Style.reset}"))
+    
+    print("\n")
+    
+    print(centre_align_text(f"{Fore.dark_gray}You need to create a new invoice via the{Style.reset}"))
+    print(centre_align_text(f"{Fore.dark_gray}main menu before you can manage them here.{Style.reset}"))
+    
+    print("\n\n\n\n\n\n\n\n\n\n")
+    
+    print(centre_align_text(f"Returning you to the main menu in 5 seconds..."))
+    
+    print("\n")
+
+    print_full_width_line(Fore.dark_gray)
+
+    time.sleep(8)
+
+
+
+def profile_screen(company_name, company_email, company_phone, company_address, company_payment_details):
+    mixed_align_text(
+        "", "Company Profile", "",
+        Fore.RED, Fore.white, Fore.dark_gray
+    )
+    print_full_width_line(Fore.dark_gray)
+    
+    print("\n\n")
+    
+    # print(Figlet(font='big').renderText('NEW INVOICE'))
+    print(centre_figlet_text("COMPANY PROFILE", 'big'))  #doh big
+    
+    print(centre_align_text(f"{Fore.dark_gray}─────────────────────────────{Style.reset} Company Profile {Fore.dark_gray}─────────────────────────────{Style.reset}\n"))
+    print(f"                        {Style.BOLD}{Fore.dark_gray}{'1. Company Name: '}{Style.reset}{company_name if company_name is not None else '':<21}     {Style.BOLD}{Fore.dark_gray}{'2. Company email: '}{Style.reset}{company_email if company_email is not None else '':<30}")
+    print(f"                        {Style.BOLD}{Fore.dark_gray}{'3. Company Phone: '}{Style.reset}{company_phone if company_phone is not None else '':<20}     {Style.BOLD}{Fore.dark_gray}{'4. Company Address: '}{Style.reset}{company_address if company_address is not None else '':<30}")
+    print(f"                        {Style.BOLD}{Fore.dark_gray}{'5. Payment Details: '}{Style.reset}{company_payment_details if company_payment_details is not None else '':<40}")
+    print("\n\n\n")
+
+    print(centre_align_text(f"{Fore.dark_gray}Enter the number of the detail to update or type 'back'.{Style.reset}"))
+    print("")
+    print_full_width_line(Fore.dark_gray)
