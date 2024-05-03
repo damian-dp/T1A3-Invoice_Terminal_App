@@ -298,405 +298,461 @@ def create_html_invoice(company_name, company_address, company_phone, company_em
         <head>
             <title>Invoice</title>
             <style>
-                .invoice {
+                .div {
                     background-color: #fff;
+                    display: flex;
                     max-width: 612px;
-                    padding-top: 40px;
+                    padding-top: 39px;
+                    flex-direction: column;
+                    align-items: center;
                 }
-
-                .invoice-header {
-                    padding: 0 40px;
+                .div-2 {
+                    display: flex;
+                    width: 100%;
+                    max-width: 572px;
+                    gap: 20px;
+                    padding: 0 20px;
                 }
-
-                .invoice-title {
+                .div-3 {
                     color: #111118;
-                    margin: 0;
-                    font: 700 32px "Space Mono", sans-serif;
+                    font: 700 32px Space Mono, sans-serif;
                 }
-
-                .invoice-details {
+                .div-4 {
+                    display: flex;
+                    flex-direction: column;
                     font-size: 10px;
                     line-height: 133.9%;
-                    margin-top: 20px;
+                    flex: 1;
                 }
-
-                .invoice-number {
-                    margin-top: 10px;
+                .div-5 {
+                    display: flex;
+                    gap: 8px;
                 }
-
-                .invoice-number-label {
+                .div-6 {
                     color: #111118;
                     font-family: Roboto, sans-serif;
                     font-weight: 500;
-                    display: inline-block;
-                    width: 120px;
                 }
-
-                .invoice-number-value {
+                .div-7 {
                     color: #434343;
                     font-family: Roboto, sans-serif;
                     font-weight: 400;
-                    display: inline-block;
                 }
-
-                .invoice-due-date {
-                    margin-top: 10px;
+                .div-8 {
+                    display: flex;
+                    gap: 8px;
                 }
-
-                .invoice-due-date-label {
+                .div-9 {
                     color: #111118;
                     font-family: Roboto, sans-serif;
                     font-weight: 500;
-                    display: inline-block;
-                    width: 120px;
                 }
-
-                .invoice-due-date-value {
+                .div-10 {
                     color: #434343;
                     font-family: Roboto, sans-serif;
                     font-weight: 400;
-                    display: inline-block;
                 }
-
-                .invoice-header-divider {
+                .div-11 {
                     background-color: #b8b8b8;
                     margin-top: 9px;
+                    width: 532px;
+                    max-width: 100%;
                     height: 1px;
                 }
-
-                .invoice-parties {
+                .div-12 {
+                    display: flex;
                     margin-top: 33px;
-                    padding: 0 40px;
-                }
-
-                .invoice-to {
-                    margin-bottom: 20px;
-                }
-
-                .invoice-to-label {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 500;
-                    margin-bottom: 5px;
-                }
-
-                .invoice-to-divider {
-                    background-color: #b8b8b8;
-                    margin-top: 10px;
-                    height: 1px;
-                }
-
-                .invoice-to-contact {
-                    margin-top: 15px;
-                }
-
-                .invoice-to-name {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 500;
-                    line-height: 133.9%;
-                    margin-bottom: 5px;
-                }
-
-                .invoice-to-info {
-                    color: #7c7c7c;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 400;
-                    line-height: 16px;
-                    margin-bottom: 5px;
-                }
-
-                .invoice-to-company-name {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    line-height: 133.9%;
-                    margin-bottom: 4px;
-                }
-
-                .invoice-to-company-address {
-                    color: #7c7c7c;
-                    font-family: Roboto, sans-serif;
-                    line-height: 17px;
-                }
-
-                .invoice-from {
-                    margin-bottom: 20px;
-                }
-
-                .invoice-from-label {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 500;
-                    margin-bottom: 5px;
-                }
-
-                .invoice-from-divider {
-                    background-color: #b8b8b8;
-                    margin-top: 10px;
-                    height: 1px;
-                }
-
-                .invoice-from-contact {
-                    margin-top: 15px;
-                }
-
-                .invoice-from-name {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 500;
-                    line-height: 133.9%;
-                    margin-bottom: 5px;
-                }
-
-                .invoice-from-info {
-                    color: #7c7c7c;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 400;
-                    line-height: 16px;
-                    margin-bottom: 5px;
-                }
-
-                .invoice-from-address {
-                    color: #7c7c7c;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 400;
-                    line-height: 17px;
-                }
-
-                .invoice-items {
-                    margin-top: 25px;
-                    padding: 0 40px;
+                    width: 100%;
+                    max-width: 532px;
+                    gap: 20px;
                     font-size: 10px;
-                }
-
-                .invoice-items-header {
                     color: #111118;
                     font-weight: 500;
                     white-space: nowrap;
-                    margin-bottom: 10px;
                 }
-
-                .invoice-items-header-label {
+                .div-13 {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                    width: fit-content;
+                    padding: 0 20px;
+                }
+                .div-14 {
                     font-family: Roboto, sans-serif;
                 }
-
-                .invoice-items-header-subtotal {
-                    text-align: right;
-                    font-family: Roboto, sans-serif;
-                }
-
-                .invoice-items-divider {
+                .div-15 {
                     background-color: #b8b8b8;
                     margin-top: 10px;
                     height: 1px;
                 }
-
-                .invoice-item {
-                    margin-top: 24px;
+                .div-16 {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                    width: fit-content;
+                    padding: 0 20px;
                 }
-
-                .invoice-item-name {
+                .div-17 {
+                    font-family: Roboto, sans-serif;
+                }
+                .div-18 {
+                    background-color: #b8b8b8;
+                    margin-top: 10px;
+                    height: 1px;
+                }
+                .div-19 {
+                    margin-top: 15px;
+                    width: 100%;
+                    max-width: 532px;
+                }
+                .div-20 {
+                    gap: 20px;
+                    display: flex;
+                }
+                .column {
+                    display: flex;
+                    flex-direction: column;
+                    line-height: normal;
+                    width: 50%;
+                    margin-left: 0px;
+                }
+                .div-21 {
+                    display: flex;
+                    flex-grow: 1;
+                    flex-direction: column;
+                    font-size: 10px;
+                    padding: 0 20px;
+                }
+                .div-22 {
+                    display: flex;
+                    gap: 18px;
+                }
+                .div-23 {
+                    align-self: start;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .div-24 {
                     color: #111118;
                     font-family: Roboto, sans-serif;
                     font-weight: 500;
-                    margin-bottom: 5px;
+                    line-height: 133.9%;
                 }
-
-                .invoice-item-description {
+                .div-25 {
                     color: #7c7c7c;
-                    font-family: "Space Mono", sans-serif;
+                    font-family: Roboto, sans-serif;
                     font-weight: 400;
-                    margin-bottom: 5px;
+                    line-height: 16px;
+                    margin-top: 5px;
                 }
-
-                .invoice-item-subtotal {
+                .div-26 {
+                    display: flex;
+                    flex-direction: column;
+                    font-weight: 400;
+                    flex: 1;
+                }
+                .div-27 {
+                    color: #111118;
+                    font-family: Roboto, sans-serif;
+                    line-height: 133.9%;
+                }
+                .div-28 {
+                    color: #7c7c7c;
+                    font-family: Roboto, sans-serif;
+                    line-height: 17px;
+                    margin-top: 4px;
+                }
+                .div-29 {
+                    color: #111118;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
+                    margin-top: 27px;
+                }
+                .column-2 {
+                    display: flex;
+                    flex-direction: column;
+                    line-height: normal;
+                    width: 50%;
+                    margin-left: 20px;
+                }
+                .div-30 {
+                    display: flex;
+                    flex-grow: 1;
+                    flex-direction: column;
+                    font-size: 10px;
+                    padding: 0 20px;
+                }
+                .div-31 {
+                    display: flex;
+                    gap: 18px;
+                }
+                .div-32 {
+                    align-self: start;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .div-33 {
+                    color: #111118;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
+                    line-height: 133.9%;
+                }
+                .div-34 {
+                    color: #7c7c7c;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 400;
+                    line-height: 16px;
+                    margin-top: 5px;
+                }
+                .div-35 {
+                    color: #7c7c7c;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 400;
+                    line-height: 17px;
+                }
+                .div-36 {
                     color: #111118;
                     text-align: right;
-                    font-family: "Space Mono", sans-serif;
-                    font-weight: 400;
-                    margin-top: 10px;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
+                    align-self: end;
+                    margin-top: 44px;
                 }
-
-                .invoice-payment {
-                    background-color: #ffdc27;
-                    margin-top: 134px;
-                    padding: 30px 40px;
+                .div-37 {
+                    background-color: #b8b8b8;
+                    margin-top: 13px;
+                    width: 532px;
+                    max-width: 100%;
+                    height: 1px;
+                }
+                .div-38 {
+                    display: flex;
+                    margin-top: 24px;
+                    width: 100%;
+                    max-width: 572px;
+                    gap: 20px;
+                    font-size: 10px;
+                    justify-content: space-between;
+                    padding: 2px 20px;
+                }
+                .div-39 {
+                    display: flex;
+                    flex-direction: column;
+                }
+                .div-40 {
                     color: #111118;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
                 }
-
-                .invoice-payment-header {
+                .div-41 {
+                    color: #7c7c7c;
+                    font-family: Space Mono, sans-serif;
+                    font-weight: 400;
+                    margin-top: 9px;
+                }
+                .div-42 {
+                    color: #111118;
+                    text-align: right;
+                    font-family: Space Mono, sans-serif;
+                    font-weight: 400;
+                    align-self: start;
+                    margin-top: 18px;
+                }
+                .div-43 {
+                    background-color: #ffdc27;
+                    align-self: stretch;
+                    display: flex;
+                    margin-top: 114px;
+                    width: 100%;
+                    flex-direction: column;
+                    color: #111118;
+                    padding: 32px 40px;
+                }
+                .div-44 {
+                    display: flex;
+                    gap: 20px;
                     font-size: 10px;
                     font-weight: 700;
-                    margin-bottom: 10px;
+                    justify-content: space-between;
                 }
-
-                .invoice-payment-header-label {
+                .div-45 {
                     font-family: Roboto, sans-serif;
                     line-height: 149%;
                 }
-
-                .invoice-payment-header-total {
+                .div-46 {
                     text-align: right;
                     font-family: Roboto, sans-serif;
                 }
-
-                .invoice-payment-divider {
+                .div-47 {
                     background-color: #000;
-                    margin-top: 12px;
-                    height: 1px;
+                    margin-top: 6px;
+                    height: 2px;
                 }
-
-                .invoice-payment-details {
-                    margin-top: 19px;
+                .div-48 {
+                    display: flex;
+                    margin-top: 17px;
+                    gap: 20px;
+                    justify-content: space-between;
                 }
-
-                .invoice-payment-account {
+                .div-49 {
+                    margin: auto 0;
                     font: 400 10px/15px Roboto, sans-serif;
-                    margin-bottom: 5px;
                 }
-
-                .invoice-payment-total {
+                .div-50 {
+                    display: flex;
+                    flex-direction: column;
                     text-align: right;
                 }
-
-                .invoice-payment-total-amount {
-                    font: 700 32px "Space Mono", sans-serif;
-                    margin-bottom: 10px;
+                .div-51 {
+                    font: 700 32px Space Mono, sans-serif;
                 }
-
-                .invoice-payment-total-due {
-                    margin-top: 16px;
+                .div-52 {
+                    align-self: end;
+                    margin-top: 12px;
                     font: 400 10px Roboto, sans-serif;
                 }
-
-                .invoice-payment-footer-divider {
+                .div-53 {
                     background-color: #000;
-                    margin-top: 19px;
-                    height: 1px;
+                    margin-top: 15px;
+                    height: 2px;
                 }
-
-                .invoice-footer {
+                .div-54 {
+                    display: flex;
                     margin-top: 14px;
+                    width: 100%;
+                    gap: 20px;
                     font-size: 10px;
+                    justify-content: space-between;
                 }
-
-                .invoice-footer-note {
+                .div-55 {
                     display: flex;
                     gap: 6px;
                     font-weight: 400;
-                    margin-bottom: 5px;
                 }
-
-                .invoice-footer-note-icon {
-                    background-color: #111118;
+                .div-56 {
                     border-radius: 50%;
+                    background-color: #111118;
                     width: 15px;
                     height: 15px;
                 }
-
-                .invoice-footer-note-text {
-                    font-family: "Helvetica Neue", sans-serif;
+                .div-57 {
+                    font-family: Helvetica Neue, sans-serif;
+                    flex-grow: 1;
                 }
-
-                .invoice-footer-currency {
+                .div-58 {
                     text-align: right;
-                    font-family: "Helvetica Neue", sans-serif;
+                    font-family: Helvetica Neue, sans-serif;
                     font-weight: 700;
                 }
             </style>
+            </style>
         </head>
         <body>
-            <section class="invoice">
-                <header class="invoice-header">
-                    <h1 class="invoice-title">INVOICE</h1>
-                    <div class="invoice-details">
-                        <div class="invoice-number">
-                            <span class="invoice-number-label">Invoice Number:</span>
-                            <span class="invoice-number-value">{{ invoice_number }}</span>
+            <div class="div">
+                <div class="div-2">
+                    <div class="div-3">INVOICE</div>
+                    <div class="div-4">
+                        <div class="div-5">
+                            <div class="div-6">Invoice Number:</div>
+                            <div class="div-7">{{ invoice_number }}</div>
                         </div>
-                        <div class="invoice-due-date">
-                            <span class="invoice-due-date-label">Due Date:</span>
-                            <span class="invoice-due-date-value">{{ invoice_due }}</span>
+                        <div class="div-8">
+                            <div class="div-9">Due Date:</div>
+                            <div class="div-10">{{ invoice_due}}</div>
                         </div>
                     </div>
-                    <div class="invoice-header-divider"></div>
-                </header>
-                <section class="invoice-parties">
-                    <div class="invoice-to">
-                        <div class="invoice-to-label">To:</div>
-                        <div class="invoice-to-divider"></div>
-                        <div class="invoice-to-contact">
-                            <div class="invoice-to-name">{{ customer_contact_name }}</div>
-                            <div class="invoice-to-info">
-                                {{ customer_phone }} <br />
-                                {{ customer_email }}
-                            </div>
-                            <div class="invoice-to-company">
-                                <div class="invoice-to-company-name">{{ customer_company_name }}</div>
-                                <div class="invoice-to-company-address">
-                                    {{ customer_address }}
+                </div>
+                <div class="div-11"></div>
+                <div class="div-12">
+                    <div class="div-13">
+                        <div class="div-14">To:</div>
+                        <div class="div-15"></div>
+                    </div>
+                    <div class="div-16">
+                        <div class="div-17">From:</div>
+                        <div class="div-18"></div>
+                    </div>
+                </div>
+                <div class="div-19">
+                    <div class="div-20">
+                        <div class="column">
+                            <div class="div-21">
+                                <div class="div-22">
+                                    <div class="div-23">
+                                        <div class="div-24">{{ customer_contact_name}}</div>
+                                        <div class="div-25">
+                                            {{ customer_phone }}
+                                        <br />
+                                            {{ customer_email}}
+                                        </div>
+                                    </div>
+                                    <div class="div-26">
+                                        <div class="div-27">{{ customer_company_name}}</div>
+                                        <div class="div-28">
+                                            {{ customer_address }}
+                                        </div>
+                                    </div>
                                 </div>
+                                <div class="div-29">Items</div>
+                            </div>
+                        </div>
+                        <div class="column-2">
+                            <div class="div-30">
+                                <div class="div-31">
+                                    <div class="div-32">
+                                        <div class="div-33">{{ company_name}}</div>
+                                        <div class="div-34">
+                                            {{ company_phone }}
+                                            <br />
+                                            {{ company_email }}
+                                        </div>
+                                    </div>
+                                    <div class="div-35">
+                                        {{ company_address }}
+                                    </div>
+                                </div>
+                                <div class="div-36">Subtotal</div>
                             </div>
                         </div>
                     </div>
-                    <div class="invoice-from">
-                        <div class="invoice-from-label">From:</div>
-                        <div class="invoice-from-divider"></div>
-                        <div class="invoice-from-contact">
-                            <div class="invoice-from-name">{{ company_name }}</div>
-                            <div class="invoice-from-info">
-                                {{ company_phone }}<br />
-                                {{ company_email }}
-                            </div>
-                            <div class="invoice-from-address">
-                                {{ company_address }}
+                </div>
+                <div class="div-37"></div>
+                {% for item in items %}
+                <div class="div-38">
+                        <div class="div-39">
+                            <div class="div-40">{{ item.name  }}</div>
+                            <div class="div-41">
+                                {{ item.description }}
                             </div>
                         </div>
+                    <div class="div-42">{{ item.price }}</div>
+                </div>
+                {% endfor %}
+                <div class="div-43">
+                    <div class="div-44">
+                        <div class="div-45">Payment Information:</div>
+                        <div class="div-46">Total Due:</div>
                     </div>
-                </section>
-                <section class="invoice-items">
-                    <div class="invoice-items-header">
-                        <div class="invoice-items-header-label">Items</div>
-                        <div class="invoice-items-header-subtotal">Subtotal</div>
-                    </div>
-                    <div class="invoice-items-divider"></div>
-                    {% for item in items %}
-                    <div class="invoice-item">
-                        <div class="invoice-item-name">{{ item.name }}</div>
-                        <div class="invoice-item-description">
-                            {{ item.description }}
-                        </div>
-                        <div class="invoice-item-subtotal">$ {{ item.price }}</div>
-                    </div>
-                    {% endfor %}
-                </section>
-                <section class="invoice-payment">
-                    <div class="invoice-payment-header">
-                        <div class="invoice-payment-header-label">Payment Information:</div>
-                        <div class="invoice-payment-header-total">Total Due:</div>
-                    </div>
-                    <div class="invoice-payment-divider"></div>
-                    <div class="invoice-payment-details">
-                        <div class="invoice-payment-account">
+                    <div class="div-47"></div>
+                    <div class="div-48">
+                        <div class="div-49">
                             {{ company_payment_details }}
                         </div>
-                        <div class="invoice-payment-total">
-                            <div class="invoice-payment-total-amount">${{ total_price }}</div>
-                            <div class="invoice-payment-total-due">Total payment due {{ invoice_due }}</div>
+                        <div class="div-50">
+                        <div class="div-51">${{ total_price }}</div>
+                        <div class="div-52">Total payment due {{ invoice_due }}</div>
                         </div>
                     </div>
-                    <div class="invoice-payment-footer-divider"></div>
-                </section>
-                <footer class="invoice-footer">
-                    <div class="invoice-footer-note">
-                        <div class="invoice-footer-note-icon"></div>
-                        <div class="invoice-footer-note-text">
-                            Thank you! — {{ company_email}}
+                    <div class="div-53"></div>
+                    <div class="div-54">
+                        <div class="div-55">
+                        <div class="div-56"></div>
+                        <div class="div-57">Thank you! — {{ company_email }}</div>
                         </div>
+                        <div class="div-58">$AUD</div>
                     </div>
-                    <div class="invoice-footer-currency">$AUD</div>
-                </footer>
-            </section>
+                </div>
+            </div> 
         </body>
     </html>
     """)
