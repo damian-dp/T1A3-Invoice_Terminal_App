@@ -416,7 +416,7 @@ def view_past_invoices():
                 past_invoice_screen_header()
                 
                 for idx, row in enumerate(invoices):
-                    print(f"{Style.BOLD}{Fore.white}                               {idx + 1}.{Style.reset}{Fore.white}  INV# {Fore.dark_gray}{row['Invoice Number']:<10}    {Fore.white}Customer: {Fore.dark_gray}{row['Customer Company Name']:<15}  {Fore.white}Due: {Fore.dark_gray}{row['Invoice Due Date']}")
+                    print(f"{Style.BOLD}                               {idx + 1}.{Style.reset}  INV# {Fore.dark_gray}{row['Invoice Number']:<10}    {Style.reset}Customer: {Fore.dark_gray}{row['Customer Company Name']:<15}  {Style.reset}Due: {Fore.dark_gray}{row['Invoice Due Date']}")
                     print(f"{Fore.dark_gray}                               ───────────────────────────────────────────────────────────────{Style.reset}")
 
             num_invoices = len(invoices)
@@ -460,7 +460,7 @@ def view_past_invoices():
                         past_invoice_screen_header()
                         
                         for idx, row in enumerate(invoices):
-                            print(f"{Style.BOLD}{Fore.white}                               {idx + 1}.{Style.reset}{Fore.white}  INV# {Fore.dark_gray}{row['Invoice Number']:<10}    {Fore.white}Customer: {Fore.dark_gray}{row['Customer Company Name']:<15}  {Fore.white}Due: {Fore.dark_gray}{row['Invoice Due Date']}")
+                            print(f"{Style.BOLD}                               {idx + 1}.{Style.reset}  INV# {Fore.dark_gray}{row['Invoice Number']:<10}    {Style.reset}Customer: {Fore.dark_gray}{row['Customer Company Name']:<15}  {Style.reset}Due: {Fore.dark_gray}{row['Invoice Due Date']}")
                             print(f"{Fore.dark_gray}                               ───────────────────────────────────────────────────────────────{Style.reset}")
 
                     num_invoices = len(invoices)
@@ -499,7 +499,7 @@ def view_past_invoices():
                             past_invoice_screen_header()
                             
                             for idx, row in enumerate(invoices):
-                                print(f"{Style.BOLD}{Fore.white}                               {idx + 1}.{Style.reset}{Fore.white}  INV# {Fore.dark_gray}{row['Invoice Number']:<10}    {Fore.white}Customer: {Fore.dark_gray}{row['Customer Company Name']:<15}  {Fore.white}Due: {Fore.dark_gray}{row['Invoice Due Date']}")
+                                print(f"{Style.BOLD}                               {idx + 1}.{Style.reset}  INV# {Fore.dark_gray}{row['Invoice Number']:<10}    {Style.reset}Customer: {Fore.dark_gray}{row['Customer Company Name']:<15}  {Style.reset}Due: {Fore.dark_gray}{row['Invoice Due Date']}")
                                 print(f"{Fore.dark_gray}                               ───────────────────────────────────────────────────────────────{Style.reset}")
 
                         num_invoices = len(invoices)

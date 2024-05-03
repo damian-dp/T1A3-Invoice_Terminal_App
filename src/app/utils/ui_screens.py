@@ -174,7 +174,7 @@ def main_menu_screen():
     
     print("\n")
     
-    print(centre_align_text(f"{Style.BOLD}{Fore.white}1) Create Invoice       2) View Past Invoices       3) View Company Profile{Style.reset}"))
+    print(centre_align_text(f"{Style.BOLD}1) Create Invoice       2) View Past Invoices       3) View Company Profile{Style.reset}"))
     
     print("\n")
     
@@ -194,7 +194,7 @@ def exit_screen():
     
     print("\n\n\n\n\n\n\n\n\n\n\n\n")
     
-    print(centre_align_text(f"{Fore.white}You're about to close the app.{Style.reset}"))
+    print(centre_align_text(f"You're about to close the app.{Style.reset}"))
     
     print("\n")
     
@@ -325,7 +325,7 @@ def deletion_success_screen():
     
     print("\n")
     
-    print(centre_align_text(f"{Fore.white}The Invoice record has been deleted.{Style.reset}"))
+    print(centre_align_text(f"{Style.reset}The Invoice record has been deleted.{Style.reset}"))
     print(centre_align_text(f"{Fore.dark_gray}You are no longer able to re-export or view this invoice.{Style.reset}"))
     
     print("\n\n\n\n\n\n\n\n\n\n")

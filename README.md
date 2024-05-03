@@ -45,6 +45,7 @@ You can view the [GitHub repository here](https://github.com/damian-dp/T1A3-Invo
     ```sh
     chmod +x run_app.sh
     ```
+    Note: copying this command and then pasting it into your terminal to run it may throw an error that the command doesnt exist. You may need to type it out manually.
 
 <br>
 
@@ -83,6 +84,7 @@ You can view the [GitHub repository here](https://github.com/damian-dp/T1A3-Invo
     ```sh
     chmod +x run_app.sh
     ```
+    Note: copying this command and then pasting it into your terminal to run it may throw an error that the command doesnt exist. You may need to type it out manually.
 
 <br>
 
