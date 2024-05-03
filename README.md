@@ -50,7 +50,7 @@ You can view the [GitHub repository here](https://github.com/damian-dp/T1A3-Invo
 
 5. Run the run_app.sh script to start the application:
     ```sh
-    ./src/run_app.sh
+    ./run_app.sh
     ```
 
 <br>
