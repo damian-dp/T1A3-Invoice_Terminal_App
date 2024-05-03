@@ -2,6 +2,8 @@
 
 clear
 
+rm -rf app/utils/__pycache__
+
 # Delete the virtual environment
 rm -rf app/.venv
 echo "Virtual environment deleted."

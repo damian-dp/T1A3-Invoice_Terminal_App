@@ -178,7 +178,7 @@ def main_menu_screen():
     
     print("\n")
     
-    print(centre_align_text(f"{Style.BOLD}{Fore.dark_gray}4) Exit       5) Help{Style.reset}"))
+    print(centre_align_text(f"{Style.BOLD}{Fore.white}{Back.red}  4) Exit   {Style.reset}"))
     
     print("\n\n\n\n\n\n")
     

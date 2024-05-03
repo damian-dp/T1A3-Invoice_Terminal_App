@@ -20,7 +20,7 @@ You can view the [GitHub repository here](https://github.com/damian-dp/T1A3-Invo
 
 ### Unix-based Systems (macOS, Linux)
 
-1. Open a terminal.
+1. Open a terminal. You must use a standalone terminal window that can be resized. Do not use inbuilt VS Code terminal.
 
 2. Clone the GitHub repository via SSH:
     ```sh
@@ -58,7 +58,7 @@ You can view the [GitHub repository here](https://github.com/damian-dp/T1A3-Invo
 ### Windows
 1. Install [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install).
 
-2. Open a WSL terminal.
+2. Open a WSL terminal. You must use a standalone WSL terminal window that can be resized. Do not use inbuilt VS Code terminal.
 
 3. Clone the GitHub repository via SSH:
     ```sh
