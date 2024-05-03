@@ -220,6 +220,7 @@ def collect_input_invoice():
         else:
             break  # Exit the outer loop if the user is done adding items
 
+    total_price = sum(item['price'] for item in items)
     return {
         'customer_company_name': customer_company_name,
         'customer_contact_name': customer_contact_name,
@@ -228,7 +229,8 @@ def collect_input_invoice():
         'customer_address': customer_address,
         'invoice_number': invoice_number,
         'invoice_due': invoice_due,
-        'items': items
+        'items': items,
+        'total_price': total_price
     }
 
 def create_new_invoice():
@@ -262,13 +264,14 @@ def create_new_invoice():
     invoice_number = invoice_data['invoice_number']
     invoice_due = invoice_data['invoice_due']
     items = invoice_data['items']
+    total_price = sum(item['price'] for item in items)
         
     company_name, company_address, company_phone, company_email, company_payment_details = read_company_profile()
                 
     html_content = create_html_invoice(
         company_name, company_address, company_phone, company_email, company_payment_details,
         customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address,
-        invoice_number, invoice_due, items
+        invoice_number, invoice_due, items, total_price
     )
     
     current_date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -276,9 +279,10 @@ def create_new_invoice():
     pdf_filename = f"{invoice_number}_{safe_company_name}_{current_date}.pdf"
     
     save_html_to_file("temp_invoice.html", html_content)
+
     
     if convert_html_to_pdf("temp_invoice.html", pdf_filename):
-        save_invoice_record(customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items)
+        save_invoice_record(customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items, total_price)
         clear_terminal()
         export_success_screen(pdf_filename=pdf_filename)
     else:
@@ -287,48 +291,413 @@ def create_new_invoice():
     
     return pdf_filename
 
-def create_html_invoice(company_name, company_address, company_phone, company_email, company_payment_details, customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items):
+def create_html_invoice(company_name, company_address, company_phone, company_email, company_payment_details, customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items, total_price):
     template = Template("""
     <!DOCTYPE html>
     <html>
-    <head>
-        <title>Invoice</title>
-        <style>
-            /* Add your CSS styles here */
-            /* Example: body { font-family: Arial, sans-serif; } */
-        </style>
-    </head>
-    <body>
-        <div class="invoice">
-            <h1>{{ invoice_number }} Invoice. Due {{ invoice_due }}</h1>
-            <p>From: {{ company_name }}</p>
-            <p>{{ company_address }}</p>
-            <p>{{ company_phone }}</p>
-            <p>{{ company_email }}</p>
-            <p>{{ company_payment_details }}</p>
+        <head>
+            <title>Invoice</title>
+            <style>
+                .invoice {
+                    background-color: #fff;
+                    max-width: 612px;
+                    padding-top: 40px;
+                }
 
-            <p>To: {{ customer_company_name }}</p>
-            <p>{{ customer_contact_name }}</p>
-            <p>{{ customer_phone }}</p>
-            <p>{{ customer_email }}</p>
-            <p>{{ customer_address }}</p>
+                .invoice-header {
+                    padding: 0 40px;
+                }
 
-            <table>
-                <tr>
-                    <th>Item</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                </tr>
-                {% for item in items %}
-                <tr>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.description }}</td>
-                    <td>${{ item.price }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </body>
+                .invoice-title {
+                    color: #111118;
+                    margin: 0;
+                    font: 700 32px "Space Mono", sans-serif;
+                }
+
+                .invoice-details {
+                    font-size: 10px;
+                    line-height: 133.9%;
+                    margin-top: 20px;
+                }
+
+                .invoice-number {
+                    margin-top: 10px;
+                }
+
+                .invoice-number-label {
+                    color: #111118;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
+                    display: inline-block;
+                    width: 120px;
+                }
+
+                .invoice-number-value {
+                    color: #434343;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 400;
+                    display: inline-block;
+                }
+
+                .invoice-due-date {
+                    margin-top: 10px;
+                }
+
+                .invoice-due-date-label {
+                    color: #111118;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
+                    display: inline-block;
+                    width: 120px;
+                }
+
+                .invoice-due-date-value {
+                    color: #434343;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 400;
+                    display: inline-block;
+                }
+
+                .invoice-header-divider {
+                    background-color: #b8b8b8;
+                    margin-top: 9px;
+                    height: 1px;
+                }
+
+                .invoice-parties {
+                    margin-top: 33px;
+                    padding: 0 40px;
+                }
+
+                .invoice-to {
+                    margin-bottom: 20px;
+                }
+
+                .invoice-to-label {
+                    color: #111118;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
+                    margin-bottom: 5px;
+                }
+
+                .invoice-to-divider {
+                    background-color: #b8b8b8;
+                    margin-top: 10px;
+                    height: 1px;
+                }
+
+                .invoice-to-contact {
+                    margin-top: 15px;
+                }
+
+                .invoice-to-name {
+                    color: #111118;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
+                    line-height: 133.9%;
+                    margin-bottom: 5px;
+                }
+
+                .invoice-to-info {
+                    color: #7c7c7c;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 400;
+                    line-height: 16px;
+                    margin-bottom: 5px;
+                }
+
+                .invoice-to-company-name {
+                    color: #111118;
+                    font-family: Roboto, sans-serif;
+                    line-height: 133.9%;
+                    margin-bottom: 4px;
+                }
+
+                .invoice-to-company-address {
+                    color: #7c7c7c;
+                    font-family: Roboto, sans-serif;
+                    line-height: 17px;
+                }
+
+                .invoice-from {
+                    margin-bottom: 20px;
+                }
+
+                .invoice-from-label {
+                    color: #111118;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
+                    margin-bottom: 5px;
+                }
+
+                .invoice-from-divider {
+                    background-color: #b8b8b8;
+                    margin-top: 10px;
+                    height: 1px;
+                }
+
+                .invoice-from-contact {
+                    margin-top: 15px;
+                }
+
+                .invoice-from-name {
+                    color: #111118;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
+                    line-height: 133.9%;
+                    margin-bottom: 5px;
+                }
+
+                .invoice-from-info {
+                    color: #7c7c7c;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 400;
+                    line-height: 16px;
+                    margin-bottom: 5px;
+                }
+
+                .invoice-from-address {
+                    color: #7c7c7c;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 400;
+                    line-height: 17px;
+                }
+
+                .invoice-items {
+                    margin-top: 25px;
+                    padding: 0 40px;
+                    font-size: 10px;
+                }
+
+                .invoice-items-header {
+                    color: #111118;
+                    font-weight: 500;
+                    white-space: nowrap;
+                    margin-bottom: 10px;
+                }
+
+                .invoice-items-header-label {
+                    font-family: Roboto, sans-serif;
+                }
+
+                .invoice-items-header-subtotal {
+                    text-align: right;
+                    font-family: Roboto, sans-serif;
+                }
+
+                .invoice-items-divider {
+                    background-color: #b8b8b8;
+                    margin-top: 10px;
+                    height: 1px;
+                }
+
+                .invoice-item {
+                    margin-top: 24px;
+                }
+
+                .invoice-item-name {
+                    color: #111118;
+                    font-family: Roboto, sans-serif;
+                    font-weight: 500;
+                    margin-bottom: 5px;
+                }
+
+                .invoice-item-description {
+                    color: #7c7c7c;
+                    font-family: "Space Mono", sans-serif;
+                    font-weight: 400;
+                    margin-bottom: 5px;
+                }
+
+                .invoice-item-subtotal {
+                    color: #111118;
+                    text-align: right;
+                    font-family: "Space Mono", sans-serif;
+                    font-weight: 400;
+                    margin-top: 10px;
+                }
+
+                .invoice-payment {
+                    background-color: #ffdc27;
+                    margin-top: 134px;
+                    padding: 30px 40px;
+                    color: #111118;
+                }
+
+                .invoice-payment-header {
+                    font-size: 10px;
+                    font-weight: 700;
+                    margin-bottom: 10px;
+                }
+
+                .invoice-payment-header-label {
+                    font-family: Roboto, sans-serif;
+                    line-height: 149%;
+                }
+
+                .invoice-payment-header-total {
+                    text-align: right;
+                    font-family: Roboto, sans-serif;
+                }
+
+                .invoice-payment-divider {
+                    background-color: #000;
+                    margin-top: 12px;
+                    height: 1px;
+                }
+
+                .invoice-payment-details {
+                    margin-top: 19px;
+                }
+
+                .invoice-payment-account {
+                    font: 400 10px/15px Roboto, sans-serif;
+                    margin-bottom: 5px;
+                }
+
+                .invoice-payment-total {
+                    text-align: right;
+                }
+
+                .invoice-payment-total-amount {
+                    font: 700 32px "Space Mono", sans-serif;
+                    margin-bottom: 10px;
+                }
+
+                .invoice-payment-total-due {
+                    margin-top: 16px;
+                    font: 400 10px Roboto, sans-serif;
+                }
+
+                .invoice-payment-footer-divider {
+                    background-color: #000;
+                    margin-top: 19px;
+                    height: 1px;
+                }
+
+                .invoice-footer {
+                    margin-top: 14px;
+                    font-size: 10px;
+                }
+
+                .invoice-footer-note {
+                    display: flex;
+                    gap: 6px;
+                    font-weight: 400;
+                    margin-bottom: 5px;
+                }
+
+                .invoice-footer-note-icon {
+                    background-color: #111118;
+                    border-radius: 50%;
+                    width: 15px;
+                    height: 15px;
+                }
+
+                .invoice-footer-note-text {
+                    font-family: "Helvetica Neue", sans-serif;
+                }
+
+                .invoice-footer-currency {
+                    text-align: right;
+                    font-family: "Helvetica Neue", sans-serif;
+                    font-weight: 700;
+                }
+            </style>
+        </head>
+        <body>
+            <section class="invoice">
+                <header class="invoice-header">
+                    <h1 class="invoice-title">INVOICE</h1>
+                    <div class="invoice-details">
+                        <div class="invoice-number">
+                            <span class="invoice-number-label">Invoice Number:</span>
+                            <span class="invoice-number-value">{{ invoice_number }}</span>
+                        </div>
+                        <div class="invoice-due-date">
+                            <span class="invoice-due-date-label">Due Date:</span>
+                            <span class="invoice-due-date-value">{{ invoice_due }}</span>
+                        </div>
+                    </div>
+                    <div class="invoice-header-divider"></div>
+                </header>
+                <section class="invoice-parties">
+                    <div class="invoice-to">
+                        <div class="invoice-to-label">To:</div>
+                        <div class="invoice-to-divider"></div>
+                        <div class="invoice-to-contact">
+                            <div class="invoice-to-name">{{ customer_contact_name }}</div>
+                            <div class="invoice-to-info">
+                                {{ customer_phone }} <br />
+                                {{ customer_email }}
+                            </div>
+                            <div class="invoice-to-company">
+                                <div class="invoice-to-company-name">{{ customer_company_name }}</div>
+                                <div class="invoice-to-company-address">
+                                    {{ customer_address }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invoice-from">
+                        <div class="invoice-from-label">From:</div>
+                        <div class="invoice-from-divider"></div>
+                        <div class="invoice-from-contact">
+                            <div class="invoice-from-name">{{ company_name }}</div>
+                            <div class="invoice-from-info">
+                                {{ company_phone }}<br />
+                                {{ company_email }}
+                            </div>
+                            <div class="invoice-from-address">
+                                {{ company_address }}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="invoice-items">
+                    <div class="invoice-items-header">
+                        <div class="invoice-items-header-label">Items</div>
+                        <div class="invoice-items-header-subtotal">Subtotal</div>
+                    </div>
+                    <div class="invoice-items-divider"></div>
+                    {% for item in items %}
+                    <div class="invoice-item">
+                        <div class="invoice-item-name">{{ item.name }}</div>
+                        <div class="invoice-item-description">
+                            {{ item.description }}
+                        </div>
+                        <div class="invoice-item-subtotal">$ {{ item.price }}</div>
+                    </div>
+                    {% endfor %}
+                </section>
+                <section class="invoice-payment">
+                    <div class="invoice-payment-header">
+                        <div class="invoice-payment-header-label">Payment Information:</div>
+                        <div class="invoice-payment-header-total">Total Due:</div>
+                    </div>
+                    <div class="invoice-payment-divider"></div>
+                    <div class="invoice-payment-details">
+                        <div class="invoice-payment-account">
+                            {{ company_payment_details }}
+                        </div>
+                        <div class="invoice-payment-total">
+                            <div class="invoice-payment-total-amount">${{ total_price }}</div>
+                            <div class="invoice-payment-total-due">Total payment due {{ invoice_due }}</div>
+                        </div>
+                    </div>
+                    <div class="invoice-payment-footer-divider"></div>
+                </section>
+                <footer class="invoice-footer">
+                    <div class="invoice-footer-note">
+                        <div class="invoice-footer-note-icon"></div>
+                        <div class="invoice-footer-note-text">
+                            Thank you! — {{ company_email}}
+                        </div>
+                    </div>
+                    <div class="invoice-footer-currency">$AUD</div>
+                </footer>
+            </section>
+        </body>
     </html>
     """)
     return template.render(
@@ -344,7 +713,8 @@ def create_html_invoice(company_name, company_address, company_phone, company_em
         customer_address=customer_address,
         invoice_number=invoice_number,
         invoice_due=invoice_due,
-        items=items
+        items=items,
+        total_price=total_price
     )
 
 def save_html_to_file(html_filename, html_content):
@@ -384,11 +754,11 @@ def convert_html_to_pdf(html_filename, pdf_filename):
         # Remove the temp directory and all its contents
         shutil.rmtree("temp")
         
-def save_invoice_record(customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items):
+def save_invoice_record(customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items, total_price):
     file_exists = os.path.isfile(PAST_INVOICES_PATH)
     
     with open(PAST_INVOICES_PATH, 'a', newline='') as csvfile:
-        fieldnames = ['Invoice Number', 'Customer Company Name', 'Customer Contact Name', 'Customer Phone', 'Customer Email', 'Customer Address', 'Invoice Due Date', 'Items']
+        fieldnames = ['Invoice Number', 'Customer Company Name', 'Customer Contact Name', 'Customer Phone', 'Customer Email', 'Customer Address', 'Invoice Due Date', 'Items', 'Total Price']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         
         if not file_exists:
@@ -402,7 +772,8 @@ def save_invoice_record(customer_company_name, customer_contact_name, customer_p
             'Customer Email': customer_email,
             'Customer Address': customer_address,
             'Invoice Due Date': invoice_due,
-            'Items': "; ".join([f"{item['name']}: {item['description']}: {item['price']}" for item in items])
+            'Items': "; ".join([f"{item['name']}: {item['description']}: {item['price']}" for item in items]),
+            'Total Price': total_price
         })
 
 def view_past_invoices():
@@ -552,13 +923,15 @@ def view_past_invoices():
 def re_export_to_pdf(invoice):
     try:
         items = []
+        total_price = 0.0  # Initialize total_price
         item_details = invoice['Items'].split('; ')
         for item in item_details:
             item_components = item.split(': ')
             item_name = item_components[0]
-            item_description = ': '.join(item_components[1:])  # Avoid including the price in the description
+            item_description = ': '.join(item_components[1:-1])  # Avoid including the price in the description
             item_price = float(item_components[-1])  # Last component is the price
             items.append({'name': item_name, 'description': item_description, 'price': item_price})
+            total_price += item_price  # Add the item price to the total price
         
         html_content = create_html_invoice(
             company_name='Your Company Name',
@@ -573,7 +946,8 @@ def re_export_to_pdf(invoice):
             customer_address=invoice['Customer Address'],
             invoice_number=invoice['Invoice Number'],
             invoice_due=invoice['Invoice Due Date'],
-            items=items
+            items=items,
+            total_price=total_price  # Pass total_price to create_html_invoice
         )
         
         # Create the Invoice Exports directory if it doesn't exist
