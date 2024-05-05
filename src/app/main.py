@@ -5,16 +5,18 @@ import subprocess
 import curses
 import datetime
 import shutil
-from jinja2 import Template                     # type: ignore
-from xhtml2pdf import pisa                      # type: ignore
-from colored import Fore, Back, Style           # type: ignore
+from jinja2 import Environment, FileSystemLoader      # type: ignore
+from xhtml2pdf import pisa                            # type: ignore
+from colored import Fore, Back, Style                 # type: ignore
 
-from utils.ui_screens import print_full_width_line, centre_align_text, onbaording_screen, onboarding_success_screen, onboarding_failure_screen, main_menu_screen, create_invoice_screen_header, create_invoice_screen_body, export_success_screen, export_failure_screen, past_invoice_screen_header, deletion_success_screen, no_past_invoices_screen, profile_screen, exit_screen
+from utils.ui_screens import *
 
 COMPANY_PROFILE_PATH = '../src/data/company_profile.csv'
 PAST_INVOICES_PATH = '../src/data/past_invoices.csv'
 
-def resize_terminal():
+
+# Terminal Management Logic
+def resize_terminal_window():
     # The command to resize the terminal window
     resize_command = 'printf "\\e[8;35;125t"'
 
@@ -35,62 +37,14 @@ def resize_terminal():
     curses.endwin()
 
 def clear_terminal():
-    # Clear terminal command for different operating systems
-    clear_command = ""
-    if os.name == "posix":  # Unix/Linux/MacOS
-        clear_command = "clear"
-    elif os.name == "nt":   # Windows
-        clear_command = "cls"
+    clear_command = "clear" if os.name == "posix" else "cls" if os.name == "nt" else None
+    if clear_command:
+        subprocess.run(clear_command, shell=True)
     else:
-        # Unsupported operating system
         print("Unsupported operating system. Terminal cannot be cleared.")
-        return
 
-    # Execute the clear command
-    subprocess.run(clear_command, shell=True)
 
-def app():
-    # Check onboarding status at the start of the app
-    clear_terminal()
-    check_onboarding()
-
-    # Menu loop
-    while True:
-        main_menu_screen()
-        choice = input("Enter your choice (1-4): ")
-        
-        if choice == '1':
-            create_new_invoice()
-        elif choice == '2':
-            view_past_invoices()
-        elif choice == '3':
-            view_and_update_company_profile()
-        elif choice == '4':
-            clear_terminal()
-            exit_screen()
-            
-            confirm = input("Would you like to exit? (yes/no): ")
-            
-            if confirm.lower() == 'yes':
-                clear_terminal()
-                # Add execute permissions to the shut_down.sh script
-                subprocess.run(['chmod', '+x', 'scripts/shut_down.sh'])
-
-                # Call the shell script to deactivate and delete the virtual environment
-                subprocess.run(['bash', 'scripts/shut_down.sh'])
-
-                break
-            
-            elif confirm.lower() == 'no':
-                clear_terminal()
-                main_menu_screen()
-                
-            else:
-                print("Invalid choice, please enter 'yes' or 'no'.")
-            
-        else:
-            print("Invalid choice, please enter 1, 2, 3, or 4.")
-            
+# Onboarding Logic
 def check_onboarding():
     if os.path.exists(COMPANY_PROFILE_PATH):
         print("Onboarding already completed.")
@@ -99,28 +53,28 @@ def check_onboarding():
             next(reader)  # Skip header
             return next(reader)
     else:
-        return onboarding()
+        return perform_onboarding()
     
-def onboarding():
+def perform_onboarding():
     clear_terminal()
     
-    onbaording_screen()
+    onboarding_screen()
     company_name = input("Enter your company name: ")
     clear_terminal()
     
-    onbaording_screen(company_name=company_name)
+    onboarding_screen(company_name=company_name)
     company_email = input("Enter your company email: ")
     clear_terminal()
     
-    onbaording_screen(company_name=company_name, company_email=company_email)
+    onboarding_screen(company_name=company_name, company_email=company_email)
     company_phone = input("Enter your company phone number: ")
     clear_terminal()
     
-    onbaording_screen(company_name=company_name, company_email=company_email, company_phone=company_phone)
+    onboarding_screen(company_name=company_name, company_email=company_email, company_phone=company_phone)
     company_address = input("Enter your company address: ")
     clear_terminal()
     
-    onbaording_screen(company_name=company_name, company_email=company_email, company_phone=company_phone, company_address=company_address)
+    onboarding_screen(company_name=company_name, company_email=company_email, company_phone=company_phone, company_address=company_address)
     company_payment_details = input("Enter payment details and instructions that will be displayed on your invoices: ")
     
     # Check if the file exists
@@ -140,9 +94,11 @@ def onboarding():
     except IOError as e:
         clear_terminal()
         onboarding_failure_screen(error_code=e)
-        
-def collect_input_invoice():
-    resize_terminal()
+
+
+# Invoice Management Logic
+def get_invoice_input():
+    resize_terminal_window()
     time.sleep(0.5)
     clear_terminal()
     
@@ -251,10 +207,10 @@ def create_new_invoice():
     company_profile = read_company_profile()
     
     if company_profile is None:
-        onboarding()
+        perform_onboarding()
         company_profile = read_company_profile()
 
-    invoice_data = collect_input_invoice()
+    invoice_data = get_invoice_input()
     
     customer_company_name = invoice_data['customer_company_name']
     customer_contact_name = invoice_data['customer_contact_name']
@@ -268,7 +224,7 @@ def create_new_invoice():
         
     company_name, company_address, company_phone, company_email, company_payment_details = read_company_profile()
                 
-    html_content = create_html_invoice(
+    html_content = generate_html_invoice(
         company_name, company_address, company_phone, company_email, company_payment_details,
         customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address,
         invoice_number, invoice_due, items, total_price
@@ -291,471 +247,14 @@ def create_new_invoice():
     
     return pdf_filename
 
-def create_html_invoice(company_name, company_address, company_phone, company_email, company_payment_details, customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items, total_price):
-    template = Template("""
-    <!DOCTYPE html>
-    <html>
-        <head>
-            <title>Invoice</title>
-            <style>
-                .div {
-                    background-color: #fff;
-                    display: flex;
-                    max-width: 612px;
-                    padding-top: 39px;
-                    flex-direction: column;
-                    align-items: center;
-                }
-                .div-2 {
-                    display: flex;
-                    width: 100%;
-                    max-width: 572px;
-                    gap: 20px;
-                    padding: 0 20px;
-                }
-                .div-3 {
-                    color: #111118;
-                    font: 700 32px Space Mono, sans-serif;
-                }
-                .div-4 {
-                    display: flex;
-                    flex-direction: column;
-                    font-size: 10px;
-                    line-height: 133.9%;
-                    flex: 1;
-                }
-                .div-5 {
-                    display: flex;
-                    gap: 8px;
-                }
-                .div-6 {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 500;
-                }
-                .div-7 {
-                    color: #434343;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 400;
-                }
-                .div-8 {
-                    display: flex;
-                    gap: 8px;
-                }
-                .div-9 {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 500;
-                }
-                .div-10 {
-                    color: #434343;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 400;
-                }
-                .div-11 {
-                    background-color: #b8b8b8;
-                    margin-top: 9px;
-                    width: 532px;
-                    max-width: 100%;
-                    height: 1px;
-                }
-                .div-12 {
-                    display: flex;
-                    margin-top: 33px;
-                    width: 100%;
-                    max-width: 532px;
-                    gap: 20px;
-                    font-size: 10px;
-                    color: #111118;
-                    font-weight: 500;
-                    white-space: nowrap;
-                }
-                .div-13 {
-                    display: flex;
-                    flex-direction: column;
-                    flex: 1;
-                    width: fit-content;
-                    padding: 0 20px;
-                }
-                .div-14 {
-                    font-family: Roboto, sans-serif;
-                }
-                .div-15 {
-                    background-color: #b8b8b8;
-                    margin-top: 10px;
-                    height: 1px;
-                }
-                .div-16 {
-                    display: flex;
-                    flex-direction: column;
-                    flex: 1;
-                    width: fit-content;
-                    padding: 0 20px;
-                }
-                .div-17 {
-                    font-family: Roboto, sans-serif;
-                }
-                .div-18 {
-                    background-color: #b8b8b8;
-                    margin-top: 10px;
-                    height: 1px;
-                }
-                .div-19 {
-                    margin-top: 15px;
-                    width: 100%;
-                    max-width: 532px;
-                }
-                .div-20 {
-                    gap: 20px;
-                    display: flex;
-                }
-                .column {
-                    display: flex;
-                    flex-direction: column;
-                    line-height: normal;
-                    width: 50%;
-                    margin-left: 0px;
-                }
-                .div-21 {
-                    display: flex;
-                    flex-grow: 1;
-                    flex-direction: column;
-                    font-size: 10px;
-                    padding: 0 20px;
-                }
-                .div-22 {
-                    display: flex;
-                    gap: 18px;
-                }
-                .div-23 {
-                    align-self: start;
-                    display: flex;
-                    flex-direction: column;
-                }
-                .div-24 {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 500;
-                    line-height: 133.9%;
-                }
-                .div-25 {
-                    color: #7c7c7c;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 400;
-                    line-height: 16px;
-                    margin-top: 5px;
-                }
-                .div-26 {
-                    display: flex;
-                    flex-direction: column;
-                    font-weight: 400;
-                    flex: 1;
-                }
-                .div-27 {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    line-height: 133.9%;
-                }
-                .div-28 {
-                    color: #7c7c7c;
-                    font-family: Roboto, sans-serif;
-                    line-height: 17px;
-                    margin-top: 4px;
-                }
-                .div-29 {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 500;
-                    margin-top: 27px;
-                }
-                .column-2 {
-                    display: flex;
-                    flex-direction: column;
-                    line-height: normal;
-                    width: 50%;
-                    margin-left: 20px;
-                }
-                .div-30 {
-                    display: flex;
-                    flex-grow: 1;
-                    flex-direction: column;
-                    font-size: 10px;
-                    padding: 0 20px;
-                }
-                .div-31 {
-                    display: flex;
-                    gap: 18px;
-                }
-                .div-32 {
-                    align-self: start;
-                    display: flex;
-                    flex-direction: column;
-                }
-                .div-33 {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 500;
-                    line-height: 133.9%;
-                }
-                .div-34 {
-                    color: #7c7c7c;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 400;
-                    line-height: 16px;
-                    margin-top: 5px;
-                }
-                .div-35 {
-                    color: #7c7c7c;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 400;
-                    line-height: 17px;
-                }
-                .div-36 {
-                    color: #111118;
-                    text-align: right;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 500;
-                    align-self: end;
-                    margin-top: 44px;
-                }
-                .div-37 {
-                    background-color: #b8b8b8;
-                    margin-top: 13px;
-                    width: 532px;
-                    max-width: 100%;
-                    height: 1px;
-                }
-                .div-38 {
-                    display: flex;
-                    margin-top: 24px;
-                    width: 100%;
-                    max-width: 572px;
-                    gap: 20px;
-                    font-size: 10px;
-                    justify-content: space-between;
-                    padding: 2px 20px;
-                }
-                .div-39 {
-                    display: flex;
-                    flex-direction: column;
-                }
-                .div-40 {
-                    color: #111118;
-                    font-family: Roboto, sans-serif;
-                    font-weight: 500;
-                }
-                .div-41 {
-                    color: #7c7c7c;
-                    font-family: Space Mono, sans-serif;
-                    font-weight: 400;
-                    margin-top: 9px;
-                }
-                .div-42 {
-                    color: #111118;
-                    text-align: right;
-                    font-family: Space Mono, sans-serif;
-                    font-weight: 400;
-                    align-self: start;
-                    margin-top: 18px;
-                }
-                .div-43 {
-                    background-color: #ffdc27;
-                    align-self: stretch;
-                    display: flex;
-                    margin-top: 114px;
-                    width: 100%;
-                    flex-direction: column;
-                    color: #111118;
-                    padding: 32px 40px;
-                }
-                .div-44 {
-                    display: flex;
-                    gap: 20px;
-                    font-size: 10px;
-                    font-weight: 700;
-                    justify-content: space-between;
-                }
-                .div-45 {
-                    font-family: Roboto, sans-serif;
-                    line-height: 149%;
-                }
-                .div-46 {
-                    text-align: right;
-                    font-family: Roboto, sans-serif;
-                }
-                .div-47 {
-                    background-color: #000;
-                    margin-top: 6px;
-                    height: 2px;
-                }
-                .div-48 {
-                    display: flex;
-                    margin-top: 17px;
-                    gap: 20px;
-                    justify-content: space-between;
-                }
-                .div-49 {
-                    margin: auto 0;
-                    font: 400 10px/15px Roboto, sans-serif;
-                }
-                .div-50 {
-                    display: flex;
-                    flex-direction: column;
-                    text-align: right;
-                }
-                .div-51 {
-                    font: 700 32px Space Mono, sans-serif;
-                }
-                .div-52 {
-                    align-self: end;
-                    margin-top: 12px;
-                    font: 400 10px Roboto, sans-serif;
-                }
-                .div-53 {
-                    background-color: #000;
-                    margin-top: 15px;
-                    height: 2px;
-                }
-                .div-54 {
-                    display: flex;
-                    margin-top: 14px;
-                    width: 100%;
-                    gap: 20px;
-                    font-size: 10px;
-                    justify-content: space-between;
-                }
-                .div-55 {
-                    display: flex;
-                    gap: 6px;
-                    font-weight: 400;
-                }
-                .div-56 {
-                    border-radius: 50%;
-                    background-color: #111118;
-                    width: 15px;
-                    height: 15px;
-                }
-                .div-57 {
-                    font-family: Helvetica Neue, sans-serif;
-                    flex-grow: 1;
-                }
-                .div-58 {
-                    text-align: right;
-                    font-family: Helvetica Neue, sans-serif;
-                    font-weight: 700;
-                }
-            </style>
-            </style>
-        </head>
-        <body>
-            <div class="div">
-                <div class="div-2">
-                    <div class="div-3">INVOICE</div>
-                    <div class="div-4">
-                        <div class="div-5">
-                            <div class="div-6">Invoice Number:</div>
-                            <div class="div-7">{{ invoice_number }}</div>
-                        </div>
-                        <div class="div-8">
-                            <div class="div-9">Due Date:</div>
-                            <div class="div-10">{{ invoice_due}}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="div-11"></div>
-                <div class="div-12">
-                    <div class="div-13">
-                        <div class="div-14">To:</div>
-                        <div class="div-15"></div>
-                    </div>
-                    <div class="div-16">
-                        <div class="div-17">From:</div>
-                        <div class="div-18"></div>
-                    </div>
-                </div>
-                <div class="div-19">
-                    <div class="div-20">
-                        <div class="column">
-                            <div class="div-21">
-                                <div class="div-22">
-                                    <div class="div-23">
-                                        <div class="div-24">{{ customer_contact_name}}</div>
-                                        <div class="div-25">
-                                            {{ customer_phone }}
-                                        <br />
-                                            {{ customer_email}}
-                                        </div>
-                                    </div>
-                                    <div class="div-26">
-                                        <div class="div-27">{{ customer_company_name}}</div>
-                                        <div class="div-28">
-                                            {{ customer_address }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="div-29">Items</div>
-                            </div>
-                        </div>
-                        <div class="column-2">
-                            <div class="div-30">
-                                <div class="div-31">
-                                    <div class="div-32">
-                                        <div class="div-33">{{ company_name}}</div>
-                                        <div class="div-34">
-                                            {{ company_phone }}
-                                            <br />
-                                            {{ company_email }}
-                                        </div>
-                                    </div>
-                                    <div class="div-35">
-                                        {{ company_address }}
-                                    </div>
-                                </div>
-                                <div class="div-36">Subtotal</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="div-37"></div>
-                {% for item in items %}
-                <div class="div-38">
-                        <div class="div-39">
-                            <div class="div-40">{{ item.name  }}</div>
-                            <div class="div-41">
-                                {{ item.description }}
-                            </div>
-                        </div>
-                    <div class="div-42">{{ item.price }}</div>
-                </div>
-                {% endfor %}
-                <div class="div-43">
-                    <div class="div-44">
-                        <div class="div-45">Payment Information:</div>
-                        <div class="div-46">Total Due:</div>
-                    </div>
-                    <div class="div-47"></div>
-                    <div class="div-48">
-                        <div class="div-49">
-                            {{ company_payment_details }}
-                        </div>
-                        <div class="div-50">
-                        <div class="div-51">${{ total_price }}</div>
-                        <div class="div-52">Total payment due {{ invoice_due }}</div>
-                        </div>
-                    </div>
-                    <div class="div-53"></div>
-                    <div class="div-54">
-                        <div class="div-55">
-                        <div class="div-56"></div>
-                        <div class="div-57">Thank you! — {{ company_email }}</div>
-                        </div>
-                        <div class="div-58">$AUD</div>
-                    </div>
-                </div>
-            </div> 
-        </body>
-    </html>
-    """)
+def generate_html_invoice(company_name, company_address, company_phone, company_email, company_payment_details, customer_company_name, customer_contact_name, customer_phone, customer_email, customer_address, invoice_number, invoice_due, items, total_price):
+    # Get the absolute path of the directory where the script is located
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    # Set up the Jinja2 environment and load the template
+    env = Environment(loader=FileSystemLoader(os.path.join(dir_path, 'utils/html_templates')))
+    template = env.get_template('invoice_template.html')
+
     return template.render(
         company_name=company_name,
         company_address=company_address,
@@ -989,12 +488,28 @@ def re_export_to_pdf(invoice):
             items.append({'name': item_name, 'description': item_description, 'price': item_price})
             total_price += item_price  # Add the item price to the total price
         
-        html_content = create_html_invoice(
-            company_name='Your Company Name',
-            company_address='Your Company Address',
-            company_phone='Your Company Phone',
-            company_email='Your Company Email',
-            company_payment_details='Your Company Payment Details',
+        
+        def read_company_profile():
+            try:
+                with open(COMPANY_PROFILE_PATH, 'r', newline='') as file:
+                    reader = csv.reader(file)
+                    next(reader)  # Skip header
+                    return next(reader)  # Return the first row with actual data
+            except FileNotFoundError:
+                print("No company profile found. Please complete onboarding first.")
+                return None
+            except Exception as e:
+                print(f"Failed to read company profile: {str(e)}")
+                return None     
+            
+        company_name, company_address, company_phone, company_email, company_payment_details = read_company_profile()
+        
+        html_content = generate_html_invoice(
+            company_name=company_name,
+            company_address=company_address,
+            company_phone=company_phone,
+            company_email=company_email,
+            company_payment_details=company_payment_details,
             customer_company_name=invoice['Customer Company Name'],
             customer_contact_name=invoice['Customer Contact Name'],
             customer_phone=invoice['Customer Phone'],
@@ -1049,15 +564,15 @@ def delete_invoice_record(invoice_number):
         print("Invoice deleted successfully.")
     except Exception as e:
         print(f"An error occurred while deleting the invoice: {str(e)}")
-        
+
+
+# Company Profile Management Logic
 def view_and_update_company_profile():
-    
-    print("\n========== Company Profile ==========\n")
-    
+        
     # Check if the company profile file exists
     if not os.path.exists(COMPANY_PROFILE_PATH):
         print("No company profile found. Please create a new one.")
-        onboarding()
+        perform_onboarding()
 
     # Reading the current company profile data
     try:
@@ -1133,6 +648,52 @@ def view_and_update_company_profile():
         print("\nCompany profile updated successfully.")
     except Exception as e:
         print(f"Error writing to file: {str(e)}")
+       
+       
+# Main Application Logic
+def main_app():
+    # Check onboarding status at the start of the app
+    clear_terminal()
+    check_onboarding()
+
+    # Menu loop
+    while True:
+        main_menu_screen()
+        choice = input("Enter your choice (1-4): ")
         
+        if choice == '1':
+            create_new_invoice()
+        elif choice == '2':
+            view_past_invoices()
+        elif choice == '3':
+            view_and_update_company_profile()
+        elif choice == '4':
+            clear_terminal()
+            exit_screen()
+            
+            confirm = input("Would you like to exit? (yes/no): ")
+            
+            if confirm.lower() == 'yes':
+                clear_terminal()
+                # Add execute permissions to the shut_down.sh script
+                subprocess.run(['chmod', '+x', 'scripts/shut_down.sh'])
+
+                # Call the shell script to deactivate and delete the virtual environment
+                subprocess.run(['bash', 'scripts/shut_down.sh'])
+
+                break
+            
+            elif confirm.lower() == 'no':
+                clear_terminal()
+                main_menu_screen()
+                
+            else:
+                print("Invalid choice, please enter 'yes' or 'no'.")
+            
+        else:
+            print("Invalid choice, please enter 1, 2, 3, or 4.")       
+ 
+ 
+# Application entry point
 if __name__ == "__main__":
-    app()
+    main_app()

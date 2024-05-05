@@ -251,4 +251,4 @@ The implementation plan can be [viewed on trello](https://trello.com). I have al
 <br>
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](docs/LICENSE)

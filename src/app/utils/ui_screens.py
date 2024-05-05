@@ -76,7 +76,7 @@ def print_full_width_line(color=Fore.WHITE):
 
 # Screens
 
-def onbaording_screen(company_name=None, company_email=None, company_phone=None, company_address=None, company_payment_details=None):
+def onboarding_screen(company_name=None, company_email=None, company_phone=None, company_address=None, company_payment_details=None):
     mixed_align_text(
         "", "Onboarding", "",
         Fore.RED, Fore.white, Fore.dark_gray
