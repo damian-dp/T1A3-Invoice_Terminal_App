@@ -186,7 +186,24 @@ Below you will find a logic flowchart and a detailed pseudocode outline of my ap
 
 ## Implementation Plan
 
-The implementation plan can be [viewed on trello](https://trello.com). I have also broken it down into a list below:
+The implementation plan can be [viewed on trello](https://trello.com/b/X0NxIwvu). You can also find screenshots of the working trello baord below:
+
+![Trello Image 2](docs/trello_screenshots/trello_image-00002.png)
+![Trello Image 3](docs/trello_screenshots/trello_image-00003.png)
+![Trello Image 4](docs/trello_screenshots/trello_image-00004.png)
+![Trello Image 5](docs/trello_screenshots/trello_image-00005.png)
+![Trello Image 6](docs/trello_screenshots/trello_image-00006.png)
+![Trello Image 7](docs/trello_screenshots/trello_image-00007.png)
+![Trello Image 8](docs/trello_screenshots/trello_image-00008.png)
+![Trello Image 9](docs/trello_screenshots/trello_image-00009.png)
+![Trello Image 10](docs/trello_screenshots/trello_image-00010.png)
+![Trello Image 11](docs/trello_screenshots/trello_image-00011.png)
+![Trello Image 12](docs/trello_screenshots/trello_image-00012.png)
+
+
+---
+
+I have also broken the trello board down into a list below:
 
 #### Setup the project structure
 - Create the necessary directories and files for the application.
